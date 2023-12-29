@@ -4,7 +4,7 @@ import mysql.connector
 import base64
 import json
 import os
-from flask import make_response
+from flask import jsonify, make_response
 class user_model():
     def __init__(self):
         try:
@@ -141,16 +141,17 @@ class user_model():
                 return res
                 # message is not shown for 204    
         except:
+            res = make_response({"logindata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-            return make_response({"logindata":"Got error"},202)
+            return res
 
 
 ###########################   GET FLOOR DETAILS API   ##########################
     def floor_model(self,data):
         try:
             floor_id = data.get('floor_id')
-
+        
             # Construct and execute the query
             query = f"SELECT * FROM floors WHERE floor_id = '{floor_id}'"
             self.cur2.execute(query)
@@ -172,41 +173,52 @@ class user_model():
                 return res
                 # message is not shown for 204    
         except:
+            res = make_response({"floordata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-            return make_response({"floordata":"Got error"},202)
-
+            return res
 
 
 ###########################   GET STATIONS DETAILS API   ##########################
     def station_model(self):
         try:
-
             # Construct and execute the query
             query = f"SELECT * FROM stations"
             self.cur2.execute(query)
-            result = self.cur2.fetchone()
+            result = self.cur2.fetchall()
 
             if result is not None:
-                # return json.dumps(result)
-                # return{"payload": result}
+
+                transformed_data = []
+                for row in result:
+                    floor_num, line_num, station_num = row['station_id'].split(' ')
+                    transformed_row = {
+                        'floor_num': int(floor_num[1:]),  # Extract numeric part and convert to int
+                        'line_num': int(line_num[1:]),
+                        'station_num': int(station_num[1:]),
+                        'e_one': row['e_one'],
+                        'e_two': row['e_two'],
+                        'process_id': row['process_id']
+                    }
+                    transformed_data.append(transformed_row)
+                    # Return the transformed data in JSON format
                 print(result)
-                res = make_response({"floordata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                response = make_response(jsonify({'stationdata': transformed_data}), 200)
+                response.headers['Access-Control-Allow-Origin'] = "*"
+                response.headers['Content-Type'] = 'application/json'
+                return response
             else:
                 # return {"message":"No Data Found"}
                 print("good")
-                res = make_response({"floordata":"No Data Found"},401)
+                res = make_response({"stationdata":"No Data Found"},401)
                 res.headers['Access-Control-Allow-Origin'] = "*"
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
         except:
+            res = make_response({"stationdata":"got error"},401)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-            return make_response({"floordata":"Got error"},202)
 
 
 #VFT
