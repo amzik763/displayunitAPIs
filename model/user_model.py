@@ -221,6 +221,94 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'
 
 
+
+###########################   ADD LINE API   ##########################
+    def add_line_model(self,data):
+        try:
+            floor_id = data.get('floor_id')
+            # Construct and execute the query
+            query = f"SELECT number_of_lines FROM floors WHERE floor_id = '{floor_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchone()
+           
+            if result is not None:
+                number_of_lines = int(result.get('number_of_lines', 0))
+                print(result)
+                print(number_of_lines)
+                query_update = f"UPDATE floors SET number_of_lines = '{number_of_lines}' + 1 WHERE floor_id = '{floor_id}'"
+                self.cur2.execute(query_update)
+                res = make_response({"floordata":"Added"},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"floordata":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except:
+            res = make_response({"floordata":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'
+
+###########################   GET FLOOR PARTS API   ##########################
+    def get_floor_parts_model(self,data):
+        try:
+            floor_id = data.get('floor_id')
+            # Construct and execute the query
+            query = f"SELECT * FROM parts WHERE floor_id = '{floor_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchall()
+           
+            if result is not None:
+                
+                res = make_response({"floorpartsdata": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"floorpartsdata":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except:
+            res = make_response({"floorpartsdata":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'
+
+###########################   GET CHECKSHEET API   ##########################
+    def get_checksheet_model(self):
+        try:
+            # Construct and execute the query
+            query = f"SELECT * FROM checksheet"
+            self.cur2.execute(query)
+            result = self.cur2.fetchall()
+           
+            if result is not None:
+                
+                res = make_response({"checksheet": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"checksheet":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except:
+            res = make_response({"checksheet":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'            
+
 #VFT
 
     def getAllUsers_model(self):

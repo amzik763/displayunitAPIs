@@ -37,6 +37,22 @@ def station_controller():
     return obj.station_model()
 
 
+##ADDLINE
+@app.route("/line/addline", methods=["POST"])
+def add_line_controller():
+    return obj.add_line_model(request.form)
+
+##GETFLOORPARTS
+@app.route("/floor/parts", methods=["POST"])
+def get_floor_parts_controller():
+    return obj.get_floor_parts_model(request.form)
+
+##GETFLOORPARTS
+@app.route("/checksheet", methods=["POST"])
+def get_checksheet_controller():
+    return obj.get_checksheet_model()
+
+
 @app.route("/user/getUsers")
 def getAllUser_controller():
     return obj.getAllUsers_model()
