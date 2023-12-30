@@ -114,7 +114,7 @@ class user_model():
 
 
 
-###########################   LOGIN OPERATOR API   ##########################
+###########################   LOGIN ADMIN API   ##########################
     def operator_loginadmin_model(self,data):
         try:
             employee_code = data.get('employee_code')
@@ -140,7 +140,8 @@ class user_model():
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            print(e)
             res = make_response({"logindata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -188,7 +189,7 @@ class user_model():
             result = self.cur2.fetchall()
 
             if result is not None:
-
+            
                 transformed_data = []
                 for row in result:
                     floor_num, line_num, station_num = row['station_id'].split(' ')
@@ -202,7 +203,7 @@ class user_model():
                     }
                     transformed_data.append(transformed_row)
                     # Return the transformed data in JSON format
-                print(result)
+                print(transformed_data)
                 response = make_response(jsonify({'stationdata': transformed_data}), 200)
                 response.headers['Access-Control-Allow-Origin'] = "*"
                 response.headers['Content-Type'] = 'application/json'
@@ -262,7 +263,7 @@ class user_model():
             query = f"SELECT * FROM parts WHERE floor_id = '{floor_id}'"
             self.cur2.execute(query)
             result = self.cur2.fetchall()
-           
+            
             if result is not None:
                 
                 res = make_response({"floorpartsdata": result},200)
@@ -282,6 +283,7 @@ class user_model():
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
 
+
 ###########################   GET CHECKSHEET API   ##########################
     def get_checksheet_model(self):
         try:
@@ -291,7 +293,6 @@ class user_model():
             result = self.cur2.fetchall()
            
             if result is not None:
-                
                 res = make_response({"checksheet": result},200)
                 res.headers['Access-Control-Allow-Origin'] = "*"
                 res.headers['Content-Type'] = 'application/json'
@@ -306,6 +307,46 @@ class user_model():
                 # message is not shown for 204    
         except:
             res = make_response({"checksheet":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'            
+
+
+###########################   GET INSTRUCTION API   ##########################
+    def get_instructionimage_model(self,data):
+        try:
+            station_id = data.get('station_id')
+            query = f"SELECT process_id FROM stations WHERE station_id = '{station_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchone()
+           
+            if result is not None:
+                process_id = int(result.get('process_id', 0))
+                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+                self.cur2.execute(query)
+                result = self.cur2.fetchone()
+
+                if result is not None:
+                    res = make_response({"instructionImage": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    print("not good")
+                    res = make_response({"instructionImage":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"instructionImage":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except:
+            res = make_response({"instructionImage":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
 

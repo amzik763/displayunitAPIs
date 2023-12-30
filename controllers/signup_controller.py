@@ -47,10 +47,15 @@ def add_line_controller():
 def get_floor_parts_controller():
     return obj.get_floor_parts_model(request.form)
 
-##GETFLOORPARTS
+##GETCHECKSHEET
 @app.route("/checksheet", methods=["POST"])
 def get_checksheet_controller():
     return obj.get_checksheet_model()
+
+##GETINSTRUCTIONIMAGE
+@app.route("/instructionimage", methods=["POST"])
+def get_instructionimage_controller():
+    return obj.get_instructionimage_model(request.form)
 
 
 @app.route("/user/getUsers")
