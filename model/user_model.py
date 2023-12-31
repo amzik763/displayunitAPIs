@@ -310,7 +310,7 @@ class user_model():
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
 
-
+ 
 ###########################   GET INSTRUCTION API   ##########################
     def get_instructionimage_model(self,data):
         try:
