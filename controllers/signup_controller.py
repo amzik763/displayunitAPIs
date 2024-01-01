@@ -34,7 +34,7 @@ def floor_controller():
 ##GETSTATIONS
 @app.route("/stations/getstations", methods=["POST"])
 def station_controller():
-    return obj.station_model()
+    return obj.station_model(request.form)
 
 
 ##ADDLINE
@@ -57,6 +57,15 @@ def get_checksheet_controller():
 def get_instructionimage_controller():
     return obj.get_instructionimage_model(request.form)
 
+##ADDCHECKSHEETDATA
+@app.route("/checksheet/add", methods=["POST"])
+def add_checksheetdata_controller():
+    return obj.add_checksheetdata_model(request.form)
+
+##GETPROCESSDATA
+@app.route("/process/get", methods=["POST"])
+def get_oneprocess_controller():
+    return obj.get_oneprocess_model(request.form)
 
 @app.route("/user/getUsers")
 def getAllUser_controller():

@@ -1,4 +1,6 @@
+from datetime import datetime
 from io import BytesIO
+import time
 from tkinter import Image
 import mysql.connector
 import base64
@@ -181,15 +183,15 @@ class user_model():
 
 
 ###########################   GET STATIONS DETAILS API   ##########################
-    def station_model(self):
+    def station_model(self,data):
         try:
+            floor_id = data.get('floor_id')
             # Construct and execute the query
             query = f"SELECT * FROM stations"
             self.cur2.execute(query)
             result = self.cur2.fetchall()
 
             if result is not None:
-            
                 transformed_data = []
                 for row in result:
                     floor_num, line_num, station_num = row['station_id'].split(' ')
@@ -198,10 +200,19 @@ class user_model():
                         'line_num': int(line_num[1:]),
                         'station_num': int(station_num[1:]),
                         'e_one': row['e_one'],
+                        'e_one_name': row['e_one_name'],
+                        'e_one_skill': row['e_one_skill'],
                         'e_two': row['e_two'],
-                        'process_id': row['process_id']
+                        'e_two_name': row['e_two_name'],
+                        'e_two_skill': row['e_two_skill'],
+                        'process_id': row['process_id'],
+                        'process_name': row['process_name'],
+                        'process_skill': row['process_skill']
                     }
-                    transformed_data.append(transformed_row)
+                    print(floor_id)
+                    print(floor_num)
+                    if str(int(floor_num[1:])) == str(floor_id):
+                        transformed_data.append(transformed_row)
                     # Return the transformed data in JSON format
                 print(transformed_data)
                 response = make_response(jsonify({'stationdata': transformed_data}), 200)
@@ -336,7 +347,7 @@ class user_model():
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
-
+        
             else:
                 # return {"message":"No Data Found"}
                 print("good")
@@ -349,6 +360,123 @@ class user_model():
             res = make_response({"instructionImage":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
+
+
+
+###########################   ADD CHECKSHEET DATA API   ##########################
+    def add_checksheetdata_model(self,data):
+        try:
+
+            current_time_seconds = time.time()
+
+            # Convert seconds to milliseconds
+            current_time_millis = int(current_time_seconds * 1000)
+
+            print(current_time_millis)
+
+            # Convert milliseconds to a datetime object
+            current_datetime = datetime.utcfromtimestamp(current_time_millis / 1000.0)
+
+            # Format the datetime object as a string
+            # formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            formatted_datetime = current_datetime.strftime("%A, %d %B %Y %H:%M:%S")
+            print(formatted_datetime)
+            
+            # return "A"
+        
+            station_id = data.get('station_id')
+            employee_id = data.get('employee_id')
+            employee_name = data.get('employee_name')
+            timestamp = str(formatted_datetime)
+            p1 = data.get('p1')
+            p2 = data.get('p2')
+            p3 = data.get('p3')
+            p4 = data.get('p4')
+            p5 = data.get('p5')
+            p6 = data.get('p6')
+            p7 = data.get('p7')
+            p8 = data.get('p8')
+            p9 = data.get('p9')
+            p10 = data.get('p10')
+            # Construct and execute the query
+            # query = f"INSERT INTO checksheet_data (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) VALUES ({station_id}, {employee_id}, {employee_name}, {timestamp}, {p1}, {p2}, {p3}, {p4}, {p5}, {p6}, {p7}, {p8}, {p9}, {p10})"
+            # query = f""
+            query = "INSERT INTO checksheet_data (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
+
+            self.cur2.execute(query, values)
+            # self.cur2.execute(query)
+            result = self.cur2.fetchall()
+            
+            if result is not None:
+                res = make_response({"checksheet": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"checksheet":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except Exception as e:
+            print(e)
+            res = make_response({"checksheet":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'  
+            return res
+
+
+
+###########################   GET PROCESS DATA API   ##########################
+    def get_oneprocess_model(self,data):
+        try:
+            station_id = data.get('station_id')
+            # Construct and execute the query
+            query = f"SELECT * FROM stations WHERE station_id = '{station_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchone()
+            # print("start")
+           
+            if result is not None:
+                process_id = int(result.get('process_id', 0))
+                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+                self.cur2.execute(query)
+                result = self.cur2.fetchone()
+                # print("not null 1")
+
+
+
+                if result is not None:
+                    res = make_response({"processdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # print("not good")
+                    res = make_response({"processdata":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+ 
+            else:
+                # return {"message":"No Data Found"}
+                # print("good")
+                res = make_response({"processdata":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except Exception as e:
+            print(e)
+            res = make_response({"processdata":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'            
+            return res
+            
+
 
 #VFT
 
