@@ -67,6 +67,15 @@ def add_checksheetdata_controller():
 def get_oneprocess_controller():
     return obj.get_oneprocess_model(request.form)
 
+##SAVEWORK
+@app.route("/work/add", methods=["POST"])
+def savework_controller():
+    return obj.savework_model(request.form)
+
+
+
+
+##VFT
 @app.route("/user/getUsers")
 def getAllUser_controller():
     return obj.getAllUsers_model()
