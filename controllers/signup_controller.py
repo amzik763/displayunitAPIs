@@ -72,6 +72,18 @@ def get_oneprocess_controller():
 def savework_controller():
     return obj.savework_model(request.form)
 
+##REASON
+@app.route("/reason", methods=["POST"])
+def reason_controller():
+    return obj.reason_model(request.form)
+
+##SAVEWORK
+@app.route("/work/get", methods=["POST"])
+def getwork_controller():
+    return obj.getwork_model(request.form)
+
+
+
 
 
 

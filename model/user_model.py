@@ -518,28 +518,25 @@ class user_model():
             self.con2.start_transaction()
 
             # Construct and execute the query
-            query = f"INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            # query = f"INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled)
-
             self.cur2.execute(query,values)
             result = self.cur2.fetchone()
             # print("start")
             print(result)
             if self.cur2.rowcount > 0:
                 # process_data_id = int(result.get('work_id', 0))
-
                 # ANOTHER TRNASACTION
-                query = f"INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                # query = f"INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
-
-                self.cur2.execute(query)
+                self.cur2.execute(query, values)
                 self.con2.commit()
                 result = self.cur2.fetchone()
                 # print("not null 1")
 
-
-
-                if self.cur2.rowcount > 0   :
+                if self.cur2.rowcount > 0:
                     res = make_response({"workdata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
@@ -573,7 +570,69 @@ class user_model():
             return res
             
 
+###########################   REJECTED_REASON API   ##########################
+    def reason_model(self,data):
+        try:
+            process_id = data.get('process_id')
 
+            # Construct and execute the query
+            query = f"SELECT * FROM rejected_reason WHERE process_id = '{process_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchone()
+
+            if result is not None:
+                # return json.dumps(result)
+                # return{"payload": result}
+                res = make_response({"reasondata": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+            else:
+                # return {"message":"No Data Found"}
+                print("good")
+                res = make_response({"reasondata":"No Data Found"},401)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except Exception as e:
+            print(e)
+            res = make_response({"reasondata":"Got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'
+            return res
+
+
+###########################   GET WORK DATA API   ##########################
+    def getwork_model(self,data):
+        try:
+           
+            floor_id = data.get('floor_id')
+
+            query = f"SELECT * FROM work_f1 WHERE floor_id='{floor_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchall()
+            # print("start")
+            print(result)
+            if self.cur2.rowcount > 0:
+                    res = make_response({"workdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+            else:
+                res = make_response({"workdata":"Cannot fetch"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            res = make_response({"workdata":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'            
+            return res
+    
 
 #VFT
 
