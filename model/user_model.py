@@ -2,6 +2,7 @@ from datetime import datetime
 from io import BytesIO
 import time
 from tkinter import Image
+import traceback
 import mysql.connector
 import base64
 import json
@@ -383,7 +384,7 @@ class user_model():
 
             # Format the datetime object as a string
             # formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-            print(formatted_time)
+            # print(formatted_time)
             
             # return "A"
         
@@ -484,30 +485,70 @@ class user_model():
 ###########################   SAVE WORK DATA API   ##########################
     def savework_model(self,data):
         try:
+
+            indian_timezone = pytz.timezone('Asia/Kolkata')
+            # Get the current time in UTC
+            current_time_utc = datetime.utcnow()
+            # Convert UTC time to Indian time
+            current_time_indian = current_time_utc.replace(tzinfo=pytz.utc).astimezone(indian_timezone)
+            # Print the formatted Indian time
+            formatted_time = current_time_indian.strftime("%A, %B %d, %Y %H:%M:%S")
+            # Format the datetime object as a string
+            # formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            print(formatted_time)
+
             station_id = data.get('station_id')
+            process_id = data.get('process_id')
+            part_id = data.get('part_id')
+            timestamp = formatted_time
+            floor_id = data.get('floor_id')
+            line_id = data.get('line_id')
+            status = data.get('status')
+            reason = data.get('reason')
+            remark = data.get('remark')
+            isfilled = data.get('isfilled')
+            
+            p1 = data.get('p1')
+            p2 = data.get('p2')
+            p3 = data.get('p3')
+            p4 = data.get('p4')
+            p5 = data.get('p5')
+
+            # EXECUTE TRANSACTION
+            self.con2.start_transaction()
+
             # Construct and execute the query
-            query = f"SELECT * FROM stations WHERE station_id = '{station_id}'"
-            self.cur2.execute(query)
+            query = f"INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled)
+
+            self.cur2.execute(query,values)
             result = self.cur2.fetchone()
             # print("start")
-           
-            if result is not None:
-                process_id = int(result.get('process_id', 0))
-                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+            print(result)
+            if self.cur2.rowcount > 0:
+                # process_data_id = int(result.get('work_id', 0))
+
+                # ANOTHER TRNASACTION
+                query = f"INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
+
                 self.cur2.execute(query)
+                self.con2.commit()
                 result = self.cur2.fetchone()
                 # print("not null 1")
 
 
 
-                if result is not None:
-                    res = make_response({"processdata": result},200)
+                if self.cur2.rowcount > 0   :
+                    res = make_response({"workdata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
                 else:
                     # print("not good")
-                    res = make_response({"processdata":"No Data Found"},201)
+                    self.con2.rollback()
+
+                    res = make_response({"workdata":"Cannot add 2"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
@@ -515,14 +556,18 @@ class user_model():
             else:
                 # return {"message":"No Data Found"}
                 # print("good")
-                res = make_response({"processdata":"No Data Found"},201)
+                self.con2.rollback()
+
+                res = make_response({"workdata":"Cannot add"},201)
                 res.headers['Access-Control-Allow-Origin'] = "*"
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
         except Exception as e:
             print(e)
-            res = make_response({"processdata":"got error"},202)
+            traceback.print_exc()
+            self.con2.rollback()
+            res = make_response({"workdata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
             return res
