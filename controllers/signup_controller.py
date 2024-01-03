@@ -77,10 +77,17 @@ def savework_controller():
 def reason_controller():
     return obj.reason_model(request.form)
 
+
 ##SAVEWORK
 @app.route("/work/get", methods=["POST"])
 def getwork_controller():
     return obj.getwork_model(request.form)
+
+
+##SAVEWORK
+@app.route("/work/getoperator", methods=["POST"])
+def getworkforoperator_controller():
+    return obj.getworkforoperator_model(request.form)
 
 
 

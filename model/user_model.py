@@ -229,7 +229,8 @@ class user_model():
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            print(e)
             res = make_response({"stationdata":"got error"},401)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -569,6 +570,54 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'            
             return res
             
+###########################   GET WORK DATA API   ##########################
+    def getworkforoperator_model(self,data):
+        try:
+            station_id = data.get('station_id')
+            # Construct and execute the query
+            query = f"SELECT * FROM work_f1 WHERE station_id = '{station_id}'"
+            self.cur2.execute(query)
+            result = self.cur2.fetchone()
+            # print("start")
+           
+            if result is not None:
+                process_id = int(result.get('process_id', 0))
+                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+                self.cur2.execute(query)
+                result = self.cur2.fetchone()
+                # print("not null 1")
+
+
+
+                if result is not None:
+                    res = make_response({"processdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # print("not good")
+                    res = make_response({"processdata":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+ 
+            else:
+                # return {"message":"No Data Found"}
+                # print("good")
+                res = make_response({"processdata":"No Data Found"},201)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
+                # message is not shown for 204    
+        except Exception as e:
+            print(e)
+            res = make_response({"processdata":"got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'            
+            return res
+            
+
+
 
 ###########################   REJECTED_REASON API   ##########################
     def reason_model(self,data):
