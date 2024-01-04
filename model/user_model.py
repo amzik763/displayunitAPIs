@@ -596,14 +596,27 @@ class user_model():
 
                 for entry in result:
                     station_id = entry["station_id"]
+                    split_items = station_id.split()
+                    print(split_items)
+                    if len(split_items) == 3:
+                        F1, L1, S1 = split_items
+
+                # Further split each part
+                        F1_part1, F1_part2 = F1[0], F1[1:]
+                        L1_part1, L1_part2 = L1[0], L1[1:]
+                        S1_part1, S1_part2 = S1[0], S1[1:]
+
+                        print("F1:", F1_part1, F1_part2)
+                        print("L1:", L1_part1, L1_part2)
+                        print("S1:", S1_part1, S1_part2)                
                     # station_num = "".join(filter(str.isdigit, station_id_parts[-1]))
 
-                    # entry["station_num"] = station_num
+                    entry["station_num"] = S1_part2
 
-                    res = make_response({"processdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                res = make_response({"processdata": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                res.headers['Content-Type'] = 'application/json'
+                return res
     
             else:
                 res = make_response({"processdata":"No Data Found"},201)
