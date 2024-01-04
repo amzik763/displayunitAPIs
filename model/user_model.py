@@ -177,11 +177,13 @@ class user_model():
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            print(e)
             res = make_response({"floordata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
             return res
+
 
 
 ###########################   GET STATIONS DETAILS API   ##########################
@@ -530,6 +532,13 @@ class user_model():
                 # process_data_id = int(result.get('work_id', 0))
                 # ANOTHER TRNASACTION
                 # query = f"INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                
+                if isfilled == "0":
+                    res = make_response({"workdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                
                 query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
                 self.cur2.execute(query, values)
@@ -573,26 +582,25 @@ class user_model():
 ###########################   GET WORK DATA API   ##########################
     def getworkforoperator_model(self,data):
         try:
-            station_id = data.get('station_id')
+            month = data.get('month')
+            date = data.get('date')
+
             # Construct and execute the query
-            query = f"SELECT * FROM work_f1 WHERE station_id = '{station_id}'"
+            query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
+            
             self.cur2.execute(query)
-            result = self.cur2.fetchone()
-            # print("start")
+            result = self.cur2.fetchall()
+            print(result)
            
             if result is not None:
-                process_id = int(result.get('process_id', 0))
-                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
-                self.cur2.execute(query)
-                result = self.cur2.fetchone()
 
-                if result is not None:
+                for entry in result:
+                    station_id = entry["station_id"]
+                    # station_num = "".join(filter(str.isdigit, station_id_parts[-1]))
+
+                    # entry["station_num"] = station_num
+
                     res = make_response({"processdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
-                else:
-                    res = make_response({"processdata":"No Data Found"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
@@ -696,7 +704,6 @@ class user_model():
         self.cur.execute(f"INSERT INTO users(name, roll, password) VALUES('{data['name']}','{data['roll']}','{data['password']}')")
         # print(data['name'])
         return make_response({"message":"User Created Successfully"},201)
-        
     
 
     def updateOneUser_model(self, data):
