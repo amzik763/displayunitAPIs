@@ -78,7 +78,7 @@ class user_model():
         try:
             station_id = data.get('station_id')
             split_items = station_id.split()
-            print(split_items)
+            # print(split_items)
             if len(split_items) == 3:
                 F1, L1, S1 = split_items
 
@@ -87,9 +87,9 @@ class user_model():
                 L1_part1, L1_part2 = L1[0], L1[1:]
                 S1_part1, S1_part2 = S1[0], S1[1:]
 
-                print("F1:", F1_part1, F1_part2)
-                print("L1:", L1_part1, L1_part2)
-                print("S1:", S1_part1, S1_part2)
+                # print("F1:", F1_part1, F1_part2)
+                # print("L1:", L1_part1, L1_part2)
+                # print("S1:", S1_part1, S1_part2)
 
                 query = f"SELECT * FROM task_assigned WHERE line_id = '{L1_part2}' AND floor_id = '{F1_part2}'"
                 self.cur2.execute(query)
@@ -112,9 +112,11 @@ class user_model():
                 res.headers['Content-Type'] = 'application/json'
                 return res 
         except:
+            traceback.print_exc()
+            res = make_response({"taskdata":"Got error"},203)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-            return make_response({"taskdata":"Got error"},203)
+            return res
 
 
 
@@ -146,6 +148,7 @@ class user_model():
                 # message is not shown for 204    
         except Exception as e:
             print(e)
+            traceback.print_exc()
             res = make_response({"logindata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -179,6 +182,7 @@ class user_model():
                 # message is not shown for 204    
         except Exception as e:
             print(e)
+            traceback.print_exc()
             res = make_response({"floordata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -213,8 +217,8 @@ class user_model():
                         'process_name': row['process_name'],
                         'process_skill': row['process_skill']
                     }
-                    print(floor_id)
-                    print(floor_num)
+                    # print(floor_id)
+                    # print(floor_num)
                     if str(int(floor_num[1:])) == str(floor_id):
                         transformed_data.append(transformed_row)
                     # Return the transformed data in JSON format
@@ -251,8 +255,8 @@ class user_model():
            
             if result is not None:
                 number_of_lines = int(result.get('number_of_lines', 0))
-                print(result)
-                print(number_of_lines)
+                # print(result)
+                # print(number_of_lines)
                 query_update = f"UPDATE floors SET number_of_lines = '{number_of_lines}' + 1 WHERE floor_id = '{floor_id}'"
                 self.cur2.execute(query_update)
                 res = make_response({"floordata":"Added"},200)
@@ -271,6 +275,8 @@ class user_model():
             res = make_response({"floordata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
+            return res
+
 
 ###########################   GET FLOOR PARTS API   ##########################
     def get_floor_parts_model(self,data):
@@ -295,11 +301,12 @@ class user_model():
                 res.headers['Content-Type'] = 'application/json'
                 return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            traceback.print_exc()
             res = make_response({"floorpartsdata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-
+            return res
 
 ###########################   GET CHECKSHEET API   ##########################
     def get_checksheet_model(self):
@@ -529,15 +536,47 @@ class user_model():
             self.cur2.execute(query,values)
             result = self.cur2.fetchone()
             # print("start")
-            print(result)
+            # print(result)
             if self.cur2.rowcount > 0:
                  
                 if isfilled == "0":
                     self.con2.commit()
-                    res = make_response({"workdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                    if result is not None:
+
+                        myIsFilled = 0
+                        myPass = 0
+                        myFail = 0
+                        mCount = 0
+
+                        for entry in result:
+                            mStation_id = entry["station_id"]
+                            if(mStation_id == station_id):
+                                mIsFilled = entry["isfilled"]
+                                # floor_id = entry["floor_id"]
+                                # line_id = entry["line_id"]
+                                mStatus = entry["status"]
+                                mCount = mCount + 1
+                                
+                                if(mIsFilled == "1"):
+                                    myIsFilled = myIsFilled + 1
+                                if(mStatus == "1"):
+                                    myPass = myPass + 1
+                                else:
+                                    myFail = myFail + 1  
+
+                        # Create a dictionary with the variables
+                        response_dict = {
+                            "myIsFilled": myIsFilled,
+                            "myPass": myPass,
+                            "myFail": myFail,
+                            "mCount": mCount
+                        }
+
+                        # Use make_response and jsonify to create a response with the desired structure
+                        res = make_response(jsonify({"workdata": response_dict}), 200)  
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
                 
                 query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
@@ -584,7 +623,7 @@ class user_model():
                             "mCount": mCount
                         }
 
-# Use make_response and jsonify to create a response with the desired structure
+                        # Use make_response and jsonify to create a response with the desired structure
                         res = make_response(jsonify({"workdata": response_dict}), 200)            
                         # res = make_response({"workdata": result},200)
                         res.headers['Access-Control-Allow-Origin'] = "*"
@@ -637,7 +676,7 @@ class user_model():
             
             self.cur2.execute(query)
             result = self.cur2.fetchall()
-            print(result)
+            # print(result)
            
             if result is not None:
 
@@ -646,7 +685,7 @@ class user_model():
                 for entry in result:
                     station_id = entry["station_id"]
                     split_items = station_id.split()
-                    print(split_items)
+                    # print(split_items)
                     if len(split_items) == 3:
                         F1, L1, S1 = split_items
 
@@ -655,13 +694,13 @@ class user_model():
                         L1_part1, L1_part2 = L1[0], L1[1:]
                         S1_part1, S1_part2 = S1[0], S1[1:]
 
-                        print("F1:", F1_part1, F1_part2)
-                        print("L1:", L1_part1, L1_part2)
-                        print("S1:", S1_part1, S1_part2)                
+                        # print("F1:", F1_part1, F1_part2)
+                        # print("L1:", L1_part1, L1_part2)
+                        # print("S1:", S1_part1, S1_part2)                
                     # station_num = "".join(filter(str.isdigit, station_id_parts[-1]))
 
                     entry["station_num"] = S1_part2
-
+                # print(res)
                 res = make_response({"processdata": result},200)
                 res.headers['Access-Control-Allow-Origin'] = "*"
                 res.headers['Content-Type'] = 'application/json'
@@ -674,12 +713,12 @@ class user_model():
                 return res
         except Exception as e:
             print(e)
+            traceback.print_exc()
             res = make_response({"processdata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
             return res
             
-
 ###########################   REJECTED_REASON API   ##########################
     def reason_model(self,data):
         try:
@@ -712,7 +751,6 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'
             return res
 
-
 ###########################   GET WORK DATA API   ##########################
     def getwork_model(self,data):
         try:
@@ -723,7 +761,7 @@ class user_model():
             self.cur2.execute(query)
             result = self.cur2.fetchall()
             # print("start")
-            print(result)
+            # print(result)
             if self.cur2.rowcount > 0:
                     res = make_response({"workdata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
@@ -742,7 +780,7 @@ class user_model():
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
             return res
-    
+
 
 #VFT
 
