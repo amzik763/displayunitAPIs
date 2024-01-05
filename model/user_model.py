@@ -500,6 +500,8 @@ class user_model():
             # formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
             print(formatted_time)
 
+            month = data.get('month')
+            date = data.get('date')
             station_id = data.get('station_id')
             process_id = data.get('process_id')
             part_id = data.get('part_id')
@@ -529,11 +531,9 @@ class user_model():
             # print("start")
             print(result)
             if self.cur2.rowcount > 0:
-                # process_data_id = int(result.get('work_id', 0))
-                # ANOTHER TRNASACTION
-                # query = f"INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                
+                 
                 if isfilled == "0":
+                    self.con2.commit()
                     res = make_response({"workdata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
@@ -542,24 +542,71 @@ class user_model():
                 query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
                 self.cur2.execute(query, values)
-                self.con2.commit()
+                
                 result = self.cur2.fetchone()
                 # print("not null 1")
 
                 if self.cur2.rowcount > 0:
-                    res = make_response({"workdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+
+                    query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
+                    self.cur2.execute(query)
+                    result = self.cur2.fetchall()
+                    self.con2.commit()
+
+                    if result is not None:
+
+                        myIsFilled = 0
+                        myPass = 0
+                        myFail = 0
+                        mCount = 0
+
+                        for entry in result:
+                            mStation_id = entry["station_id"]
+                            if(mStation_id == station_id):
+                                mIsFilled = entry["isfilled"]
+                                # floor_id = entry["floor_id"]
+                                # line_id = entry["line_id"]
+                                mStatus = entry["status"]
+                                mCount = mCount + 1
+                                
+                                if(mIsFilled == "1"):
+                                    myIsFilled = myIsFilled + 1
+                                if(mStatus == "1"):
+                                    myPass = myPass + 1
+                                else:
+                                    myFail = myFail + 1  
+
+                        # Create a dictionary with the variables
+                        response_dict = {
+                            "myIsFilled": myIsFilled,
+                            "myPass": myPass,
+                            "myFail": myFail,
+                            "mCount": mCount
+                        }
+
+# Use make_response and jsonify to create a response with the desired structure
+                        res = make_response(jsonify({"workdata": response_dict}), 200)            
+                        # res = make_response({"workdata": result},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res   
+
+                    else:
+                        self.con2.rollback()
+                        res = make_response({"workdata":"Cannot fetch 3"},201)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res 
+
+ 
                 else:
                     # print("not good")
                     self.con2.rollback()
-
                     res = make_response({"workdata":"Cannot add 2"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
- 
+                
             else:
                 # return {"message":"No Data Found"}
                 # print("good")
@@ -593,6 +640,8 @@ class user_model():
             print(result)
            
             if result is not None:
+
+
 
                 for entry in result:
                     station_id = entry["station_id"]
