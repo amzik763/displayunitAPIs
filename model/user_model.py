@@ -68,9 +68,10 @@ class user_model():
                 return res
                 # message is not shown for 204    
         except:
+            res =  make_response({"logindata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
-            return make_response({"logindata":"Got error"},202)
+            return res
 
 
 ###########################   GET TASK API   ##########################
