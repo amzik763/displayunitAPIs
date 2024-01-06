@@ -27,18 +27,19 @@ class user_model():
 
 ###############check API
     def operator_check_model(self):
-        self.cur2.execute("SELECT * from login_operator")
-        result = self.cur2.fetchall()
+        with self.con2.cursor(dictionary=True) as cur2:
+            cur2.execute("SELECT * from login_operator")
+            result = cur2.fetchall()
 
-        if len(result)>0:
+            if len(result)>0:
             # return json.dumps(result)
             # return{"payload": result}
-            res = make_response({"payload": result},200)
-            res.headers['Access-Control-Allow-Origin'] = "*"
-            return res
-        else:
+                res = make_response({"payload": result},200)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                return res
+            else:
             # return {"message":"No Data Found"}
-            return make_response({"message":"No Data Found"},204)
+                return make_response({"message":"No Data Found"},204)
              # message is not shown for 204    
 
 ###########################   LOGIN API   ##########3################
@@ -49,23 +50,25 @@ class user_model():
 
             # Construct and execute the query
             query = f"SELECT * FROM login_operator WHERE employee_code = '{employee_code}' AND password = '{password}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
+            
+            with self.con2.cursor(dictionary=True) as cur2:
+                cur2.execute(query)
+                result = cur2.fetchone()
 
-            if result is not None:
-                # return json.dumps(result)
+                if result is not None:
+                    # return json.dumps(result)
                 # return{"payload": result}
-                res = make_response({"logindata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
+                    res = make_response({"logindata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
                 # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"logindata":"No Data Found"},401)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                    print("good")
+                    res = make_response({"logindata":"No Data Found"},401)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except:
             res =  make_response({"logindata":"Got error"},202)
@@ -93,19 +96,21 @@ class user_model():
                 # print("S1:", S1_part1, S1_part2)
 
                 query = f"SELECT * FROM task_assigned WHERE line_id = '{L1_part2}' AND floor_id = '{F1_part2}'"
-                self.cur2.execute(query)
-                result = self.cur2.fetchone()
-                if result is not None:
-                    res = make_response({"taskdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
-                else:
-                    print("good")
-                    res = make_response({"taskdata":"No task assigned"},201)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                
+                with self.con2.cursor(dictionary=True) as cur2:
+                    cur2.execute(query)
+                    result = cur2.fetchone()
+                    if result is not None:
+                        res = make_response({"taskdata": result},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+                    else:
+                        print("good")
+                        res = make_response({"taskdata":"No task assigned"},201)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
                      
             else:
                 res = make_response({"taskdata": "Invalid Station ID"},202)
@@ -129,24 +134,27 @@ class user_model():
 
             # Construct and execute the query
             query = f"SELECT * FROM login_admin WHERE employee_code = '{employee_code}' AND password = '{password}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
+            
+            with self.con2.cursor(dictionary=True) as cur2:
 
-            if result is not None:
-                # return json.dumps(result)
-                # return{"payload": result}
-                res = make_response({"logindata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"logindata":"No Data Found"},401)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+                cur2.execute(query)
+                result = cur2.fetchone()
+
+                if result is not None:
+                    # return json.dumps(result)
+                    # return{"payload": result}
+                    res = make_response({"logindata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"logindata":"No Data Found"},401)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                    # message is not shown for 204    
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -163,24 +171,27 @@ class user_model():
         
             # Construct and execute the query
             query = f"SELECT * FROM floors WHERE floor_id = '{floor_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
 
-            if result is not None:
-                # return json.dumps(result)
-                # return{"payload": result}
-                res = make_response({"floordata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"floordata":"No Data Found"},401)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+            with self.con2.cursor(dictionary=True) as cur2:
+
+                cur2.execute(query)
+                result = cur2.fetchone()
+
+                if result is not None:
+                    # return json.dumps(result)
+                    # return{"payload": result}
+                    res = make_response({"floordata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"floordata":"No Data Found"},401)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                    # message is not shown for 204    
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -197,44 +208,46 @@ class user_model():
             floor_id = data.get('floor_id')
             # Construct and execute the query
             query = f"SELECT * FROM stations"
-            self.cur2.execute(query)
-            result = self.cur2.fetchall()
+            with self.con2.cursor(dictionary=True) as cur2:
 
-            if result is not None:
-                transformed_data = []
-                for row in result:
-                    floor_num, line_num, station_num = row['station_id'].split(' ')
-                    transformed_row = {
-                        'floor_num': int(floor_num[1:]),  # Extract numeric part and convert to int
-                        'line_num': int(line_num[1:]),
-                        'station_num': int(station_num[1:]),
-                        'e_one': row['e_one'],
-                        'e_one_name': row['e_one_name'],
-                        'e_one_skill': row['e_one_skill'],
-                        'e_two': row['e_two'],
-                        'e_two_name': row['e_two_name'],
-                        'e_two_skill': row['e_two_skill'],
-                        'process_id': row['process_id'],
-                        'process_name': row['process_name'],
-                        'process_skill': row['process_skill']
-                    }
-                    # print(floor_id)
-                    # print(floor_num)
-                    if str(int(floor_num[1:])) == str(floor_id):
-                        transformed_data.append(transformed_row)
-                    # Return the transformed data in JSON format
-                print(transformed_data)
-                response = make_response(jsonify({'stationdata': transformed_data}), 200)
-                response.headers['Access-Control-Allow-Origin'] = "*"
-                response.headers['Content-Type'] = 'application/json'
-                return response
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"stationdata":"No Data Found"},401)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                cur2.execute(query)
+                result = cur2.fetchall()
+
+                if result is not None:
+                    transformed_data = []
+                    for row in result:
+                        floor_num, line_num, station_num = row['station_id'].split(' ')
+                        transformed_row = {
+                            'floor_num': int(floor_num[1:]),  # Extract numeric part and convert to int
+                            'line_num': int(line_num[1:]),
+                            'station_num': int(station_num[1:]),
+                            'e_one': row['e_one'],
+                            'e_one_name': row['e_one_name'],
+                            'e_one_skill': row['e_one_skill'],
+                            'e_two': row['e_two'],
+                            'e_two_name': row['e_two_name'],
+                            'e_two_skill': row['e_two_skill'],
+                            'process_id': row['process_id'],
+                            'process_name': row['process_name'],
+                            'process_skill': row['process_skill']
+                        }
+                        # print(floor_id)
+                        # print(floor_num)
+                        if str(int(floor_num[1:])) == str(floor_id):
+                            transformed_data.append(transformed_row)
+                        # Return the transformed data in JSON format
+                    # print(transformed_data)
+                    response = make_response(jsonify({'stationdata': transformed_data}), 200)
+                    response.headers['Access-Control-Allow-Origin'] = "*"
+                    response.headers['Content-Type'] = 'application/json'
+                    return response
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"stationdata":"No Data Found"},401)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except Exception as e:
             print(e)
@@ -251,26 +264,28 @@ class user_model():
             floor_id = data.get('floor_id')
             # Construct and execute the query
             query = f"SELECT number_of_lines FROM floors WHERE floor_id = '{floor_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
+            with self.con2.cursor(dictionary=True) as cur2:
+            
+                cur2.execute(query)
+                result = cur2.fetchone()
            
-            if result is not None:
-                number_of_lines = int(result.get('number_of_lines', 0))
-                # print(result)
-                # print(number_of_lines)
-                query_update = f"UPDATE floors SET number_of_lines = '{number_of_lines}' + 1 WHERE floor_id = '{floor_id}'"
-                self.cur2.execute(query_update)
-                res = make_response({"floordata":"Added"},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"floordata":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                if result is not None:
+                    number_of_lines = int(result.get('number_of_lines', 0))
+                    # print(result)
+                    # print(number_of_lines)
+                    query_update = f"UPDATE floors SET number_of_lines = '{number_of_lines}' + 1 WHERE floor_id = '{floor_id}'"
+                    cur2.execute(query_update)
+                    res = make_response({"floordata":"Added"},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"floordata":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except:
             res = make_response({"floordata":"got error"},202)
@@ -285,22 +300,23 @@ class user_model():
             floor_id = data.get('floor_id')
             # Construct and execute the query
             query = f"SELECT * FROM parts WHERE floor_id = '{floor_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchall()
+            with self.con2.cursor(dictionary=True) as cur2:
+                cur2.execute(query)
+                result = cur2.fetchall()
             
-            if result is not None:
+                if result is not None:
                 
-                res = make_response({"floorpartsdata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"floorpartsdata":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                    res = make_response({"floorpartsdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"floorpartsdata":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except Exception as e:
             traceback.print_exc()
@@ -314,21 +330,23 @@ class user_model():
         try:
             # Construct and execute the query
             query = f"SELECT * FROM checksheet"
-            self.cur2.execute(query)
-            result = self.cur2.fetchall()
+            with self.con2.cursor(dictionary=True) as cur2:
+            
+                cur2.execute(query)
+                result = cur2.fetchall()
            
-            if result is not None:
-                res = make_response({"checksheet": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"checksheet":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                if result is not None:
+                    res = make_response({"checksheet": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"checksheet":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except:
             res = make_response({"checksheet":"got error"},202)
@@ -341,35 +359,37 @@ class user_model():
         try:
             station_id = data.get('station_id')
             query = f"SELECT process_id FROM stations WHERE station_id = '{station_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
-           
-            if result is not None:
-                process_id = int(result.get('process_id', 0))
-                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+            with self.con2.cursor(dictionary=True) as cur2:
+            
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
-
+           
                 if result is not None:
-                    res = make_response({"instructionImage": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                    process_id = int(result.get('process_id', 0))
+                    query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+                    cur2.execute(query)
+                    result = cur2.fetchone()
+
+                    if result is not None:
+                        res = make_response({"instructionImage": result},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+                    else:
+                        print("not good")
+                        res = make_response({"instructionImage":"No Data Found"},201)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+
                 else:
-                    print("not good")
+                    # return {"message":"No Data Found"}
+                    print("good")
                     res = make_response({"instructionImage":"No Data Found"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
-
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"instructionImage":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+                    # message is not shown for 204    
         except:
             res = make_response({"instructionImage":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
@@ -418,24 +438,25 @@ class user_model():
             # query = f""
             query = "INSERT INTO checksheet_data (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
+            with self.con2.cursor(dictionary=True) as cur2:
 
-            self.cur2.execute(query, values)
-            # self.cur2.execute(query)
-            result = self.cur2.fetchall()
+                cur2.execute(query, values)
+                # self.cur2.execute(query)
+                result = cur2.fetchall()
             
-            if result is not None:
-                res = make_response({"checksheetadd": "added"},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
-                # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"checksheetadd":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+                if result is not None:
+                    res = make_response({"checksheetadd": "added"},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    # return {"message":"No Data Found"}
+                    print("good")
+                    res = make_response({"checksheetadd":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                    # message is not shown for 204    
         except Exception as e:
             print(e)
             res = make_response({"checksheetadd":"got error"},202)
@@ -451,39 +472,39 @@ class user_model():
             station_id = data.get('station_id')
             # Construct and execute the query
             query = f"SELECT * FROM stations WHERE station_id = '{station_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
-            # print("start")
-           
-            if result is not None:
-                process_id = int(result.get('process_id', 0))
-                query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+            with self.con2.cursor(dictionary=True) as cur2:
+            
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
-                # print("not null 1")
-
-
-
+                # print("start")
+           
                 if result is not None:
-                    res = make_response({"processdata": result},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                    process_id = int(result.get('process_id', 0))
+                    query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
+                    cur2.execute(query)
+                    result = cur2.fetchone()
+                    # print("not null 1")
+
+                    if result is not None:
+                        res = make_response({"processdata": result},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+                    else:
+                        # print("not good")
+                        res = make_response({"processdata":"No Data Found"},201)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+ 
                 else:
-                    # print("not good")
+                    # return {"message":"No Data Found"}
+                    # print("good")
                     res = make_response({"processdata":"No Data Found"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
- 
-            else:
-                # return {"message":"No Data Found"}
-                # print("good")
-                res = make_response({"processdata":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+                    # message is not shown for 204    
         except Exception as e:
             print(e)
             res = make_response({"processdata":"got error"},202)
@@ -534,129 +555,130 @@ class user_model():
             # query = f"INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             query = "INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled)
-            self.cur2.execute(query,values)
-            result = self.cur2.fetchone()
-            # print("start")
-            # print(result)
-            if self.cur2.rowcount > 0:
-                 
-                if isfilled == "0":
-                    self.con2.commit()
-                    if result is not None:
+            with self.con2.cursor(dictionary=True) as cur2:
+           
+                cur2.execute(query,values)
+                result = cur2.fetchone()
+                # print("start")
+                # print(result)
+                if cur2.rowcount > 0:
+                    
+                    if isfilled == "0":
+                        self.con2.commit()
+                        if result is not None:
 
-                        myIsFilled = 0
-                        myPass = 0
-                        myFail = 0
-                        mCount = 0
+                            myIsFilled = 0
+                            myPass = 0
+                            myFail = 0
+                            mCount = 0
 
-                        for entry in result:
-                            mStation_id = entry["station_id"]
-                            if(mStation_id == station_id):
-                                mIsFilled = entry["isfilled"]
-                                # floor_id = entry["floor_id"]
-                                # line_id = entry["line_id"]
-                                mStatus = entry["status"]
-                                mCount = mCount + 1
+                            for entry in result:
+                                mStation_id = entry["station_id"]
+                                if(mStation_id == station_id):
+                                    mIsFilled = entry["isfilled"]
+                                    # floor_id = entry["floor_id"]
+                                    # line_id = entry["line_id"]
+                                    mStatus = entry["status"]
+                                    mCount = mCount + 1
                                 
-                                if(mIsFilled == "1"):
-                                    myIsFilled = myIsFilled + 1
-                                if(mStatus == "1"):
-                                    myPass = myPass + 1
-                                else:
-                                    myFail = myFail + 1  
+                                    if(mIsFilled == "1"):
+                                        myIsFilled = myIsFilled + 1
+                                    if(mStatus == "1"):
+                                        myPass = myPass + 1
+                                    else:
+                                        myFail = myFail + 1  
+
+                            # Create a dictionary with the variables
+                            response_dict = {
+                                "myIsFilled": myIsFilled,
+                                "myPass": myPass,
+                                "myFail": myFail,
+                                "mCount": mCount
+                            }
+
+                            # Use make_response and jsonify to create a response with the desired structure
+                            res = make_response(jsonify({"workdata": response_dict}), 200)  
+                            res.headers['Access-Control-Allow-Origin'] = "*"
+                            res.headers['Content-Type'] = 'application/json'
+                            return res
+                
+                    query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                    values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
+                    cur2.execute(query, values)
+                
+                    result = cur2.fetchone()
+                    # print("not null 1")
+
+                    if cur2.rowcount > 0:
+
+                        query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
+                        cur2.execute(query)
+                        result = cur2.fetchall()
+                        self.con2.commit()
+
+                        if result is not None:
+
+                            myIsFilled = 0
+                            myPass = 0
+                            myFail = 0
+                            mCount = 0
+
+                            for entry in result:
+                                mStation_id = entry["station_id"]
+                                if(mStation_id == station_id):
+                                    mIsFilled = entry["isfilled"]
+                                    # floor_id = entry["floor_id"]
+                                    # line_id = entry["line_id"]
+                                    mStatus = entry["status"]
+                                    mCount = mCount + 1
+                                
+                                    if(mIsFilled == "1"):
+                                        myIsFilled = myIsFilled + 1
+                                    if(mStatus == "1"):
+                                        myPass = myPass + 1
+                                    else:
+                                        myFail = myFail + 1  
 
                         # Create a dictionary with the variables
-                        response_dict = {
-                            "myIsFilled": myIsFilled,
-                            "myPass": myPass,
-                            "myFail": myFail,
-                            "mCount": mCount
-                        }
+                            response_dict = {
+                                "myIsFilled": myIsFilled,
+                                "myPass": myPass,
+                                "myFail": myFail,
+                                "mCount": mCount
+                            }
 
-                        # Use make_response and jsonify to create a response with the desired structure
-                        res = make_response(jsonify({"workdata": response_dict}), 200)  
+                            # Use make_response and jsonify to create a response with the desired structure
+                            res = make_response(jsonify({"workdata": response_dict}), 200)            
+                            # res = make_response({"workdata": result},200)
+                            res.headers['Access-Control-Allow-Origin'] = "*"
+                            res.headers['Content-Type'] = 'application/json'
+                            return res   
+
+                        else:
+                            self.con2.rollback()
+                            res = make_response({"workdata":"Cannot fetch 3"},201)
+                            res.headers['Access-Control-Allow-Origin'] = "*"
+                            res.headers['Content-Type'] = 'application/json'
+                            return res 
+
+ 
+                    else:
+                        # print("not good")
+                        self.con2.rollback()
+                        res = make_response({"workdata":"Cannot add 2"},201)
                         res.headers['Access-Control-Allow-Origin'] = "*"
                         res.headers['Content-Type'] = 'application/json'
                         return res
                 
-                query =  "INSERT INTO process_data (process_id, station_id, timestamp, p1, p2, p3, p4, p5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (process_id, station_id, timestamp, p1, p2, p3, p4, p5)
-                self.cur2.execute(query, values)
-                
-                result = self.cur2.fetchone()
-                # print("not null 1")
-
-                if self.cur2.rowcount > 0:
-
-                    query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
-                    self.cur2.execute(query)
-                    result = self.cur2.fetchall()
-                    self.con2.commit()
-
-                    if result is not None:
-
-                        myIsFilled = 0
-                        myPass = 0
-                        myFail = 0
-                        mCount = 0
-
-                        for entry in result:
-                            mStation_id = entry["station_id"]
-                            if(mStation_id == station_id):
-                                mIsFilled = entry["isfilled"]
-                                # floor_id = entry["floor_id"]
-                                # line_id = entry["line_id"]
-                                mStatus = entry["status"]
-                                mCount = mCount + 1
-                                
-                                if(mIsFilled == "1"):
-                                    myIsFilled = myIsFilled + 1
-                                if(mStatus == "1"):
-                                    myPass = myPass + 1
-                                else:
-                                    myFail = myFail + 1  
-
-                        # Create a dictionary with the variables
-                        response_dict = {
-                            "myIsFilled": myIsFilled,
-                            "myPass": myPass,
-                            "myFail": myFail,
-                            "mCount": mCount
-                        }
-
-                        # Use make_response and jsonify to create a response with the desired structure
-                        res = make_response(jsonify({"workdata": response_dict}), 200)            
-                        # res = make_response({"workdata": result},200)
-                        res.headers['Access-Control-Allow-Origin'] = "*"
-                        res.headers['Content-Type'] = 'application/json'
-                        return res   
-
-                    else:
-                        self.con2.rollback()
-                        res = make_response({"workdata":"Cannot fetch 3"},201)
-                        res.headers['Access-Control-Allow-Origin'] = "*"
-                        res.headers['Content-Type'] = 'application/json'
-                        return res 
-
- 
                 else:
-                    # print("not good")
+                    # return {"message":"No Data Found"}
+                    # print("good")
                     self.con2.rollback()
-                    res = make_response({"workdata":"Cannot add 2"},201)
+                    res = make_response({"workdata":"Cannot add"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
-                
-            else:
-                # return {"message":"No Data Found"}
-                # print("good")
-                self.con2.rollback()
-
-                res = make_response({"workdata":"Cannot add"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-                # message is not shown for 204    
+                    # message is not shown for 204    
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -674,44 +696,46 @@ class user_model():
 
             # Construct and execute the query
             query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
+            with self.con2.cursor(dictionary=True) as cur2:
             
-            self.cur2.execute(query)
-            result = self.cur2.fetchall()
-            # print(result)
+                cur2.execute(query)
+                result = cur2.fetchall()
+                # print(result)
            
-            if result is not None:
+                if result is not None:
 
 
 
-                for entry in result:
-                    station_id = entry["station_id"]
-                    split_items = station_id.split()
-                    # print(split_items)
-                    if len(split_items) == 3:
-                        F1, L1, S1 = split_items
+                    for entry in result:
+                        station_id = entry["station_id"]
+                        split_items = station_id.split()
+                        # print(split_items)
+                        if len(split_items) == 3:
+                            F1, L1, S1 = split_items
 
-                # Further split each part
-                        F1_part1, F1_part2 = F1[0], F1[1:]
-                        L1_part1, L1_part2 = L1[0], L1[1:]
-                        S1_part1, S1_part2 = S1[0], S1[1:]
+                    # Further split each part
+                            F1_part1, F1_part2 = F1[0], F1[1:]
+                            L1_part1, L1_part2 = L1[0], L1[1:]
+                            S1_part1, S1_part2 = S1[0], S1[1:]
 
-                        # print("F1:", F1_part1, F1_part2)
-                        # print("L1:", L1_part1, L1_part2)
-                        # print("S1:", S1_part1, S1_part2)                
-                    # station_num = "".join(filter(str.isdigit, station_id_parts[-1]))
+                            # print("F1:", F1_part1, F1_part2)
+                            # print("L1:", L1_part1, L1_part2)
+                            # print("S1:", S1_part1, S1_part2)                
+                        # station_num = "".join(filter(str.isdigit, station_id_parts[-1]))
 
-                    entry["station_num"] = S1_part2
-                # print(res)
-                res = make_response({"processdata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                        entry["station_num"] = S1_part2
+                    # print(result)
+                    res = make_response({"processdata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    # print(res)
+                    return res
     
-            else:
-                res = make_response({"processdata":"No Data Found"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                else:
+                    res = make_response({"processdata":"No Data Found"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -727,23 +751,25 @@ class user_model():
 
             # Construct and execute the query
             query = f"SELECT * FROM rejected_reason WHERE process_id = '{process_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchone()
+            with self.con2.cursor(dictionary=True) as cur2:
+            
+                cur2.execute(query)
+                result = cur2.fetchone()
 
-            if result is not None:
-                # return json.dumps(result)
-                # return{"payload": result}
-                res = make_response({"reasondata": result},200)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
-            else:
+                if result is not None:
+                    # return json.dumps(result)
+                    # return{"payload": result}
+                    res = make_response({"reasondata": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
                 # return {"message":"No Data Found"}
-                print("good")
-                res = make_response({"reasondata":"No Data Found"},401)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
+                    print("good")
+                    res = make_response({"reasondata":"No Data Found"},401)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
                 # message is not shown for 204    
         except Exception as e:
             print(e)
