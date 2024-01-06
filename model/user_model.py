@@ -785,20 +785,22 @@ class user_model():
             floor_id = data.get('floor_id')
 
             query = f"SELECT * FROM work_f1 WHERE floor_id='{floor_id}'"
-            self.cur2.execute(query)
-            result = self.cur2.fetchall()
-            # print("start")
-            # print(result)
-            if self.cur2.rowcount > 0:
-                    res = make_response({"workdata": result},200)
+            with self.con2.cursor(dictionary=True) as cur2:
+            
+                cur2.execute(query)
+                result = cur2.fetchall()
+                # print("start")
+                # print(result)
+                if cur2.rowcount > 0:
+                        res = make_response({"workdata": result},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+                else:
+                    res = make_response({"workdata":"Cannot fetch"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
-            else:
-                res = make_response({"workdata":"Cannot fetch"},201)
-                res.headers['Access-Control-Allow-Origin'] = "*"
-                res.headers['Content-Type'] = 'application/json'
-                return res
                 # message is not shown for 204    
         except Exception as e:
             print(e)
