@@ -28,6 +28,9 @@ class user_model():
 ###############check API
     def operator_check_model(self):
         with self.con2.cursor(dictionary=True) as cur2:
+            if not self.con2.is_connected():
+                self.con2.reconnect()
+
             cur2.execute("SELECT * from login_operator")
             result = cur2.fetchall()
 
@@ -52,6 +55,9 @@ class user_model():
             query = f"SELECT * FROM login_operator WHERE employee_code = '{employee_code}' AND password = '{password}'"
             
             with self.con2.cursor(dictionary=True) as cur2:
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+            
                 cur2.execute(query)
                 result = cur2.fetchone()
 
@@ -98,6 +104,9 @@ class user_model():
                 query = f"SELECT * FROM task_assigned WHERE line_id = '{L1_part2}' AND floor_id = '{F1_part2}'"
                 
                 with self.con2.cursor(dictionary=True) as cur2:
+                    if not self.con2.is_connected():
+                        self.con2.reconnect()
+                    
                     cur2.execute(query)
                     result = cur2.fetchone()
                     if result is not None:
@@ -136,6 +145,8 @@ class user_model():
             query = f"SELECT * FROM login_admin WHERE employee_code = '{employee_code}' AND password = '{password}'"
             
             with self.con2.cursor(dictionary=True) as cur2:
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
 
                 cur2.execute(query)
                 result = cur2.fetchone()
@@ -174,6 +185,9 @@ class user_model():
 
             with self.con2.cursor(dictionary=True) as cur2:
 
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+
                 cur2.execute(query)
                 result = cur2.fetchone()
 
@@ -209,7 +223,8 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM stations"
             with self.con2.cursor(dictionary=True) as cur2:
-
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
                 cur2.execute(query)
                 result = cur2.fetchall()
 
@@ -256,29 +271,50 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'
             return res
 
-
-
 ###########################   ADD LINE API   ##########################
     def add_line_model(self,data):
         try:
             floor_id = data.get('floor_id')
+            part_id = data.get('part_id')
+            part_name = data.get('part_name')
             # Construct and execute the query
             query = f"SELECT number_of_lines FROM floors WHERE floor_id = '{floor_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 cur2.execute(query)
                 result = cur2.fetchone()
            
                 if result is not None:
                     number_of_lines = int(result.get('number_of_lines', 0))
+                    a = "Vivo_PCB_x48"
+                    b = "1"
+                    c = number_of_lines + 1
                     # print(result)
                     # print(number_of_lines)
+                    self.con2.start_transaction()
                     query_update = f"UPDATE floors SET number_of_lines = '{number_of_lines}' + 1 WHERE floor_id = '{floor_id}'"
                     cur2.execute(query_update)
-                    res = make_response({"floordata":"Added"},200)
-                    res.headers['Access-Control-Allow-Origin'] = "*"
-                    res.headers['Content-Type'] = 'application/json'
-                    return res
+                    query = "INSERT INTO assigned_parts (line_id, part_id, part_name) VALUES (%s, %s, %s)"
+                    values = (c, part_id,part_name)
+                    cur2.execute(query,values)
+                    result = cur2.fetchall()
+                    self.con2.commit()
+                    if cur2.rowcount > 0:          
+
+                        res = make_response({"floordata":"Added"},200)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
+                    
+                    else:
+                        print("not good")
+                        self.con2.rollback()
+                        res = make_response({"floordata":"No Data Found"},201)
+                        res.headers['Access-Control-Allow-Origin'] = "*"
+                        res.headers['Content-Type'] = 'application/json'
+                        return res
                 else:
                     # return {"message":"No Data Found"}
                     print("good")
@@ -287,7 +323,9 @@ class user_model():
                     res.headers['Content-Type'] = 'application/json'
                     return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            print(e)
+            self.con2.rollback()
             res = make_response({"floordata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -301,6 +339,9 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM parts WHERE floor_id = '{floor_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+
                 cur2.execute(query)
                 result = cur2.fetchall()
             
@@ -331,7 +372,9 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM checksheet"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 cur2.execute(query)
                 result = cur2.fetchall()
            
@@ -360,7 +403,9 @@ class user_model():
             station_id = data.get('station_id')
             query = f"SELECT process_id FROM stations WHERE station_id = '{station_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
            
@@ -439,6 +484,8 @@ class user_model():
             query = "INSERT INTO checksheet_data (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = (station_id, employee_id, employee_name, timestamp, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
             with self.con2.cursor(dictionary=True) as cur2:
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
 
                 cur2.execute(query, values)
                 # self.cur2.execute(query)
@@ -473,7 +520,9 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM stations WHERE station_id = '{station_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
                 # print("start")
@@ -556,7 +605,9 @@ class user_model():
             query = "INSERT INTO work_f1 (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = (station_id, process_id, part_id, timestamp, floor_id, line_id, status, reason, remark, isfilled)
             with self.con2.cursor(dictionary=True) as cur2:
-           
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+       
                 cur2.execute(query,values)
                 result = cur2.fetchone()
                 # print("start")
@@ -697,7 +748,9 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+
                 cur2.execute(query)
                 result = cur2.fetchall()
                 # print(result)
@@ -752,7 +805,9 @@ class user_model():
             # Construct and execute the query
             query = f"SELECT * FROM rejected_reason WHERE process_id = '{process_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 cur2.execute(query)
                 result = cur2.fetchone()
 
@@ -786,7 +841,9 @@ class user_model():
 
             query = f"SELECT * FROM work_f1 WHERE floor_id='{floor_id}'"
             with self.con2.cursor(dictionary=True) as cur2:
-            
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+        
                 cur2.execute(query)
                 result = cur2.fetchall()
                 # print("start")
@@ -810,6 +867,44 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'            
             return res
 
+
+            
+###########################   ADD_STATION API   ##########################
+    def add_station_model(self,data):
+        try:
+            qry = "INSERT INTO stations(station_id, e_one, e_one_name, e_one_skill, e_two, e_two_name, e_two_skill) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            values = [(stationdata.get('station_id'),
+                stationdata.get('e_one'),
+                stationdata.get('e_one_name'),
+                stationdata.get('e_one_skill'),
+                stationdata.get('e_two'),
+                stationdata.get('e_two_name'),
+                stationdata.get('e_two_skill')) for stationdata in data]
+            
+            
+            with self.con2.cursor(dictionary=True) as cur2:
+                if not self.con2.is_connected():
+                    self.con2.reconnect()
+                cur2.executemany(qry, values)
+                result = cur2.fetchone()
+
+                if cur2.rowcount > 0:
+                    res = make_response({"addStation": result},200)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+                else:
+                    res = make_response({"addStation":"cannot add"},201)
+                    res.headers['Access-Control-Allow-Origin'] = "*"
+                    res.headers['Content-Type'] = 'application/json'
+                    return res
+
+        except Exception as e:
+            print(e)
+            res = make_response({"addStation":"Got error"},202)
+            res.headers['Access-Control-Allow-Origin'] = "*"
+            res.headers['Content-Type'] = 'application/json'
+            return res
 
 #VFT
 

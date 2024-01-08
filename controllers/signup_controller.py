@@ -91,7 +91,10 @@ def getworkforoperator_controller():
 
 
 
-
+##ADDSTATION
+@app.route("/station/add", methods=["POST"])
+def add_station_controller():
+    return obj.add_station_model(request.form)
 
 
 ##VFT
