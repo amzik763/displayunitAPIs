@@ -267,6 +267,19 @@ def addSupressorTest_one(id,p1,p2,p3,remark,status):
     return obj.addSupressorTest_one_model(id,p1,p2,p3,remark,status,img) 
 
 
+#TAB_REAR_MIRROR
+@app.route("/test/rearmirror/<id>/<p1>/<remark>/<status>", methods=["POST"])
+def addRearMirror_one(id,p1,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addRearMirror_model(id,p1,remark,status,img) 
+
+
+
+
+
 #TAB_SAFETYGLASSTEST_ONE
 @app.route("/test/safetyglass/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
 def addSafetyGlassTest_one(id,p1,p2,p3,remark,status):
@@ -324,7 +337,186 @@ def addDashTest_one(id,p1,p2,p3,p4,remark,status):
     return obj.addDashTest_one_model(id,p1,p2,p3,p4,remark,status,img) 
 
 
+#TAB_BRAKING_MANUAL_ONE
+@app.route("/test/brakingmanual/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
+def addTestBraking_one(id,p1,p2,p3,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestBraking_model(id,p1,p2,p3,remark,status,img) 
 
+
+#TAB_PARKING_BRAKING_MANUAL_ONE
+@app.route("/test/parkingbrakingmanual/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
+def addTestParkingBraking_one(id,p1,p2,p3,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestParkingBraking_model(id,p1,p2,p3,remark,status,img) 
+
+
+#TAB_STEERING_ONE
+@app.route("/test/steering/<id>/<p1>/<remark>/<status>", methods=["POST"])
+def addTestSteering_one(id,p1,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestSteering_model(id,p1,remark,status,img) 
+
+
+#TAB_JOINTPLAY
+@app.route("/test/jointplay/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<p7>/<p8>/<remark>/<status>", methods=["POST"])
+def addTestJointPlay_one(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestJointPlay_model(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img) 
+
+
+#TAB_SPEEDOMETERMANUAL
+@app.route("/test/speedometermanual/<id>/<p1>/<p2>/<p3>/<p4>/<remark>/<status>", methods=["POST"])
+def addTestSpeedometerManual_one(id,p1,p2,p3,p4,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestSpeedometerManual_model(id,p1,p2,p3,p4,remark,status,img) 
+
+
+#TAB_LUPD
+@app.route("/test/rupd/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
+def addTestrupd_one(id,p1,p2,p3,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestrupd_model(id,p1,p2,p3,remark,status,img) 
+
+#TAB_RUPD
+@app.route("/test/lupd/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
+def addTestlupd_one(id,p1,p2,p3,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestlupd_model(id,p1,p2,p3,remark,status,img) 
+
+
+#TAB_FASTAG
+@app.route("/test/fastag/<id>/<p1>/<p2>/<remark>/<status>", methods=["POST"])
+def addTestfastag_one(id,p1,p2,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestfastag_model(id,p1,p2,remark,status,img) 
+
+#TAB_OTHERS
+@app.route("/test/others/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<p7>/<p8>/<remark>/<status>", methods=["POST"])
+def addTestothers_one(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestothers_model(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img) 
+
+
+#TAB_WHEEL
+@app.route("/test/wheel/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<remark>/<status>", methods=["POST"])
+def addTestWheel_one(id,p1,p2,p3,p4,p5,p6,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestWheel_model(id,p1,p2,p3,p4,p5,p6,remark,status,img) 
+
+
+
+#TAB_VLT
+@app.route("/test/vlt/<id>/<p1>/<p2>/<remark>/<status>", methods=["POST"])
+def addTestVlt_one(id,p1,p2,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestVlt_model(id,p1,p2,remark,status,img) 
+
+
+
+#TAB_HSRP
+@app.route("/test/hsrp/<id>/<p1>/<p2>/<remark>/<status>", methods=["POST"])
+def addTestHsrp_one(id,p1,p2,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestHsrp_model(id,p1,p2,remark,status,img) 
+
+
+#TAB_BATTERY
+@app.route("/test/battery/<id>/<p1>/<p2>/<p3>/<remark>/<status>", methods=["POST"])
+def addTestBattery_one(id,p1,p2,p3,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestBattery_model(id,p1,p2,p3,remark,status,img) 
+
+#TAB_SAFETYBELT
+@app.route("/test/safetybelt/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<remark>/<status>", methods=["POST"])
+def addTestSafetyBelt_one(id,p1,p2,p3,p4,p5,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestSafetyBelt_model(id,p1,p2,p3,p4,p5,remark,status,img) 
+
+#TAB_SPEEDGOVERNER
+@app.route("/test/speedgoverner/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<remark>/<status>", methods=["POST"])
+def addTestSpeedG_one(id,p1,p2,p3,p4,p5,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestSpeedG_model(id,p1,p2,p3,p4,p5,remark,status,img) 
+
+#TAB_TESTSPRAY
+@app.route("/test/spray/<id>/<p1>/<remark>/<status>", methods=["POST"])
+def addTestSpray_one(id,p1,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestSpray_model(id,p1,remark,status,img) 
+
+#TAB_TYRES
+@app.route("/test/tyres/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<remark>/<status>", methods=["POST"])
+def addTestTyres_one(id,p1,p2,p3,p4,p5,p6,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestTyres_model(id,p1,p2,p3,p4,p5,p6,remark,status,img) 
+
+#TAB_RETRO
+@app.route("/test/retro/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<p7>/<p8>/<p9>/<remark>/<status>", methods=["POST"])
+def addTestRetro_one(id,p1,p2,p3,p4,p6,p7,p8,p9,remark,status):
+    request_data = json.loads(request.data)
+    print(request_data)
+    img = request_data.get('nameValuePairs', {}).get('img', '')
+    print(img)
+    return obj.addTestRetro_model(id,p1,p2,p3,p4,p6,p7,p8,p9,remark,status,img) 
+
+
+
+
+
+
+##############   AUTOMATIC   ###################    
 #TAB_BRAKETEST_ONE
 @app.route("/test/brake/<id>/<status>", methods=["POST"])
 def addBrakeTest_one(id,status):

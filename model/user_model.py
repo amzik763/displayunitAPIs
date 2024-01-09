@@ -866,21 +866,24 @@ class user_model():
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'            
             return res
-
+        
 
             
 ###########################   ADD_STATION API   ##########################
     def add_station_model(self,data):
         try:
-            qry = "INSERT INTO stations(station_id, e_one, e_one_name, e_one_skill, e_two, e_two_name, e_two_skill) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            qry = "INSERT INTO stations(station_id, e_one, e_one_name, e_one_skill, e_two, e_two_name, e_two_skill, process_id, process_name, process_skill) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = [(stationdata.get('station_id'),
                 stationdata.get('e_one'),
                 stationdata.get('e_one_name'),
                 stationdata.get('e_one_skill'),
                 stationdata.get('e_two'),
                 stationdata.get('e_two_name'),
-                stationdata.get('e_two_skill')) for stationdata in data]
-            
+                stationdata.get('e_two_skill'),
+                stationdata.get('process_id'),
+                stationdata.get('process_name'),
+                stationdata.get('process_skill')
+                ) for stationdata in data]
             
             with self.con2.cursor(dictionary=True) as cur2:
                 if not self.con2.is_connected():
@@ -1272,6 +1275,26 @@ class user_model():
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
 
+
+    #ADD REAR MIRROR ONE
+    def addRearMirror_model(self, id,p1,remark,status,img):
+        try:
+            self.con.start_transaction()
+            
+            self.cur.execute(f"INSERT INTO testrearmirror(id,p1,remark,status,img) VALUES('{id}','{p1}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testrearmirror = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+  
     #ADD SAFETY GLASS TEST ONE
     def addSafetyGlassTest_one_model(self, id,p1,p2,p3,remark,status,img):
         try:
@@ -1380,6 +1403,290 @@ class user_model():
         except Exception as e:
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
+
+    #ADD TEST BRAKING MANUAL
+    def addTestBraking_model(self, id,p1,p2,p3,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testbrakingmanual(id,p1,p2,p3,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testbrakingmanual = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+    #ADD TEST PARKING BRAKING MANUAL
+    def addTestParkingBraking_model(self, id,p1,p2,p3,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testparkingbrakingmanual(id,p1,p2,p3,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testparkingbrakingmanual = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+    #ADD TEST STEERING MANUAL
+    def addTestSteering_model(self, id,p1,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO teststeering(id,p1,remark,status,img) VALUES('{id}','{p1}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET teststeering = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST JOINTPLAY MANUAL
+    def addTestJointPlay_model(self, id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testjointplay(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7}','{p8}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testjointplay = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST SPEEDOMETER MANUAL
+    def addTestSpeedometerManual_model(self, id,p1,p2,p3,p4,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testspeedometermanual(id,p1,p2,p3,p4,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testspeedometermanual = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST RUPD MANUAL
+    def addTestrupd_model(self, id,p1,p2,p3,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testrupd(id,p1,p2,p3,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testrupd = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST LUPD MANUAL
+    def addTestlupd_model(self, id,p1,p2,p3,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testlupd(id,p1,p2,p3,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testlupd = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST FASTAG MANUAL
+    def addTestfastag_model(self, id,p1,p2,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testfastag(id,p1,p2,remark,status,img) VALUES('{id}','{p1}','{p2}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testfastag = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+
+    #ADD TEST OTHERS
+    def addTestothers_model(self, id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testothers(id,p1,p2,p3,p4,p5,p6,p7,p8,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7}','{p8}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testothers = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST WHEEL
+    def addTestWheel_model(self, id,p1,p2,p3,p4,p5,p6,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testwheel(id,p1,p2,p3,p4,p5,p6,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testwheel = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+    #ADD TEST VLT
+    def addTestVlt_model(self, id,p1,p2,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testvlt(id,p1,p2,remark,status,img) VALUES('{id}','{p1}','{p2}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testvlt = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+
+    #ADD TEST HSRP
+    def addTestHsrp_model(self, id,p1,p2,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testhsrp(id,p1,p2,remark,status,img) VALUES('{id}','{p1}','{p2}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testhsrp = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+ 
+    #ADD TEST BATTERY
+    def addTestBattery_model(self, id,p1,p2,p3,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testbattery(id,p1,p2,p3,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testbattery = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+  
+    #ADD TEST SAFETYBELT
+    def addTestSafetyBelt_model(self, id,p1,p2,p3,p4,p5,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testsafetybelt(id,p1,p2,p3,p4,p5,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testsafetybelt = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+  
+    #ADD TEST SPEED GOVERNER
+    def addTestSpeedG_model(self, id,p1,p2,p3,p4,p5,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testspeedgoverner(id,p1,p2,p3,p4,p5,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testspeedgoverner = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+
 
     #ADD BRAKE TEST ONE
     def addBrakeTest_one_model(self, id, status):
