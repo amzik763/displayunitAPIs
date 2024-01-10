@@ -94,7 +94,7 @@ def getworkforoperator_controller():
 ##ADDSTATION
 @app.route("/station/add", methods=["POST"])
 def add_station_controller():
-    return obj.add_station_model(request.form)
+    return obj.add_station_model(request.json)
 
 
 ##VFT
@@ -504,12 +504,12 @@ def addTestTyres_one(id,p1,p2,p3,p4,p5,p6,remark,status):
 
 #TAB_RETRO
 @app.route("/test/retro/<id>/<p1>/<p2>/<p3>/<p4>/<p5>/<p6>/<p7>/<p8>/<p9>/<remark>/<status>", methods=["POST"])
-def addTestRetro_one(id,p1,p2,p3,p4,p6,p7,p8,p9,remark,status):
+def addTestRetro_one(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,remark,status):
     request_data = json.loads(request.data)
     print(request_data)
     img = request_data.get('nameValuePairs', {}).get('img', '')
     print(img)
-    return obj.addTestRetro_model(id,p1,p2,p3,p4,p6,p7,p8,p9,remark,status,img) 
+    return obj.addTestRetro_model(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,remark,status,img) 
 
 
 
@@ -544,23 +544,80 @@ def CheckTest_one(id,center):
 def CheckTestdata_one(id,center):
     return obj.checkTestData_one_model(id,center) 
 
-
 #CHECK HEADLAMP TEST
 @app.route("/test/check/headlamp/<id>", methods=["GET"])
 def CheckTest_Headlamp(id):
     return obj.checkTest_headlamp_model(id) 
-
 
 #CHECK TOP LIGHTS TEST
 @app.route("/test/check/toplight/<id>", methods=["GET"])
 def CheckTest_Toplight(id):
     return obj.checkTest_toplight_model(id) 
 
+    
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/stoplight/<id>", methods=["GET"])
+def CheckTest_stoplight(id):
+    return obj.checkTest_stoplight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/parkinglight/<id>", methods=["GET"])
+def CheckTest_parkinglight(id):
+    return obj.checkTest_parkinglight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/foglight/<id>", methods=["GET"])
+def CheckTest_foglight(id):
+    return obj.checkTest_foglight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/warninglight/<id>", methods=["GET"])
+def CheckTest_warninglight(id):
+    return obj.checkTest_warninglight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/numberplate/<id>", methods=["GET"])
+def CheckTest_numplatelight(id):
+    return obj.checkTest_numberplatelight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/markerlight/<id>", methods=["GET"])
+def CheckTest_outlinemarkerlight(id):
+    return obj.checkTest_outlinemarkerlight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/directionlight/<id>", methods=["GET"])
+def CheckTest_directionlight(id):
+    return obj.checkTest_directionlight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/hazardlight/<id>", methods=["GET"])
+def CheckTest_hazardlight(id):
+    return obj.checkTest_hazardlight_model(id) 
+
+
+#CHECK TOP LIGHTS TEST
+@app.route("/test/check/rearmirror/<id>", methods=["GET"])
+def CheckTest_rearmirror(id):
+    return obj.checkTest_rearmirror_model(id) 
 
 #CHECK SUPRESOR TEST
 @app.route("/test/check/Supressor/<id>", methods=["GET"])
 def CheckTest_Supressor(id):
     return obj.checkTest_supressor_model(id) 
+
+#CHECK REAR MIRROR TEST
+@app.route("/test/check/Rearmirror/<id>", methods=["GET"])
+def CheckTest_Rearmirror(id):
+    return obj.checkTest_Rearmirror_model(id) 
+
 
 
 #CHECK SAFETY GLASSES TEST
@@ -568,24 +625,20 @@ def CheckTest_Supressor(id):
 def CheckTest_Safetyglasses(id):
     return obj.checkTest_safetyglasses_model(id) 
 
-
 #CHECK HORN TEST
 @app.route("/test/check/horn/<id>", methods=["GET"])
 def CheckTest_Horn(id):
     return obj.checkTest_horn_model(id) 
-
 
 #CHECK EXHAUST TEST
 @app.route("/test/check/exhaust/<id>", methods=["GET"])
 def CheckTest_Exhaust(id):
     return obj.checkTest_exhaust_model(id) 
 
-
 #CHECK WIPER BLADE TEST
 @app.route("/test/check/wiperblade/<id>", methods=["GET"])
 def CheckTest_Wiperblade(id):
     return obj.checkTest_wiperblade_model(id) 
-
 
 #CHECK WIPER SYSTEM TEST
 @app.route("/test/check/wipersystem/<id>", methods=["GET"])
@@ -596,3 +649,111 @@ def CheckTest_Wipersystem(id):
 @app.route("/test/check/dashboard/<id>", methods=["GET"])
 def CheckTest_Dashboard(id):
     return obj.checkTest_dashboard_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/brakingmanual/<id>", methods=["GET"])
+def CheckTest_Brakingmanual(id):
+    return obj.checkTest_Brakingmanual_model(id) 
+
+
+#CHECK REAR MIRROR TEST
+@app.route("/test/check/parkingbrakingmanual/<id>", methods=["GET"])
+def CheckTest_Parkingbrakingmanual(id):
+    return obj.checkTest_Parkingbrakingmanual_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/steering/<id>", methods=["GET"])
+def CheckTest_Steering(id):
+    return obj.checkTest_Steering_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/jointplay/<id>", methods=["GET"])
+def CheckTest_Jointplay(id):
+    return obj.checkTest_jointplay_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/speedometermanual/<id>", methods=["GET"])
+def CheckTest_SPM(id):
+    return obj.checkTest_Speedometermanual_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/rupd/<id>", methods=["GET"])
+def CheckTest_RUPD(id):
+    return obj.checkTest_RUPD_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/lupd/<id>", methods=["GET"])
+def CheckTest_LUPD(id):
+    return obj.checkTest_LUPD_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/fastag/<id>", methods=["GET"])
+def CheckTest_Fastag(id):
+    return obj.checkTest_Fastag_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/others/<id>", methods=["GET"])
+def CheckTest_Others(id):
+    return obj.checkTest_Others_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/wheel/<id>", methods=["GET"])
+def CheckTest_Wheel(id):
+    return obj.checkTest_Wheel_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/vlt/<id>", methods=["GET"])
+def CheckTest_Vlt(id):
+    return obj.checkTest_Vlt_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/hsrp/<id>", methods=["GET"])
+def CheckTest_HSRP(id):
+    return obj.checkTest_hsrp_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/battery/<id>", methods=["GET"])
+def CheckTest_Battery(id):
+    return obj.checkTest_battery_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/safetybelt/<id>", methods=["GET"])
+def CheckTest_Safetybelt(id):
+    return obj.checkTest_Safetybelt_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/speedgoverner/<id>", methods=["GET"])
+def CheckTest_Speedgoverner(id):
+    return obj.checkTest_Speedgoverner_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/spray/<id>", methods=["GET"])
+def CheckTest_Spray(id):
+    return obj.checkTest_Spray_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/tyres/<id>", methods=["GET"])
+def CheckTest_Tyres(id):
+    return obj.checkTest_tyres_model(id) 
+
+
+#CHECK DASHBOARD TEST
+@app.route("/test/check/retro/<id>", methods=["GET"])
+def CheckTest_retro(id):
+    return obj.checkTest_retro_model(id) 

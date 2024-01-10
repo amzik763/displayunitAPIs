@@ -871,9 +871,12 @@ class user_model():
             
 ###########################   ADD_STATION API   ##########################
     def add_station_model(self,data):
+        print(data)
         try:
             qry = "INSERT INTO stations(station_id, e_one, e_one_name, e_one_skill, e_two, e_two_name, e_two_skill, process_id, process_name, process_skill) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = [(stationdata.get('station_id'),
+            values = [
+                (
+                stationdata.get('station_id'),
                 stationdata.get('e_one'),
                 stationdata.get('e_one_name'),
                 stationdata.get('e_one_skill'),
@@ -883,7 +886,8 @@ class user_model():
                 stationdata.get('process_id'),
                 stationdata.get('process_name'),
                 stationdata.get('process_skill')
-                ) for stationdata in data]
+                ) 
+                for stationdata in data]
             
             with self.con2.cursor(dictionary=True) as cur2:
                 if not self.con2.is_connected():
@@ -904,6 +908,7 @@ class user_model():
 
         except Exception as e:
             print(e)
+            traceback.print_exc()
             res = make_response({"addStation":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -1119,6 +1124,7 @@ class user_model():
             else:
                 return make_response({"status":"Cannot add test"},401)
         except Exception as e:
+            traceback.print_exc()
             print(e)
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
@@ -1272,6 +1278,7 @@ class user_model():
             else:
                 return make_response({"status":"Cannot add test"},401)
         except Exception as e:
+            traceback.print_exc()
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
 
@@ -1291,6 +1298,8 @@ class user_model():
             else:
                 return make_response({"status":"Cannot add test"},401)
         except Exception as e:
+            print(e)
+            traceback.print_exc()
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
 
@@ -1337,8 +1346,8 @@ class user_model():
         try:
             self.con.start_transaction()
 
-            self.cur.execute(f"INSERT INTO testexhaust(id,p1,p2,p3,p4,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{remark}','{status}','{img}')")
-            self.cur.execute(f"UPDATE tests SET testexhaust = '{status}' WHERE id='{id}'")
+            self.cur.execute(f"INSERT INTO testsilencer(id,p1,p2,p3,p4,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testsilencer = '{status}' WHERE id='{id}'")
             self.con.commit()
 
             result =  self.cur.fetchone()
@@ -1550,6 +1559,8 @@ class user_model():
             else:
                 return make_response({"status":"Cannot add test"},401)
         except Exception as e:
+            print(f"An error occurred: {e}")
+            traceback.print_exc()
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
  
@@ -1569,6 +1580,8 @@ class user_model():
             else:
                 return make_response({"status":"Cannot add test"},401)
         except Exception as e:
+            print(f"An error occurred: {e}")
+            traceback.print_exc()
             self.con.rollback()
             return make_response({"status":"Rolled Back"},400)
 
@@ -1688,6 +1701,68 @@ class user_model():
  
 
 
+    #ADD TEST SPRAY
+    def addTestSpray_model(self, id,p1,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testspray(id,p1,remark,status,img) VALUES('{id}','{p1}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testspray = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+ 
+
+
+    #ADD TEST TYRES
+    def addTestTyres_model(self, id,p1,p2,p3,p4,p5,p6,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testtyres(id,p1,p2,p3,p4,p5,p6,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testtyres = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+  #ADD TEST TYRES
+    def addTestRetro_model(self, id,p1,p2,p3,p4,p5,p6,p7,p8,p9,remark,status,img):
+        try:
+            self.con.start_transaction()
+
+            self.cur.execute(f"INSERT INTO testretro(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7}','{p8}','{p9}','{remark}','{status}','{img}')")
+            self.cur.execute(f"UPDATE tests SET testretro = '{status}' WHERE id='{id}'")
+            self.con.commit()
+
+            result =  self.cur.fetchone()
+            if self.cur.rowcount>0:
+                return make_response({"status":"Test Added"},200)
+            else:
+                return make_response({"status":"Cannot add test"},401)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            traceback.print_exc()
+            self.con.rollback()
+            return make_response({"status":"Rolled Back"},400)
+
+
+
+
+
     #ADD BRAKE TEST ONE
     def addBrakeTest_one_model(self, id, status):
         try:
@@ -1787,6 +1862,132 @@ class user_model():
         else: 
             return make_response({"status":"No Data Found"},204)
 
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_stoplight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM teststoplight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_parkinglight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testparkinglight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_foglight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testfoglight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_warninglight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testwarninglight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_numberplatelight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testnumberplatelight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_outlinemarkerlight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testoutlinemarkerlight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_directionlight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testdirectionlight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_hazardlight_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testhazardlight WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                  
+    #TOP LIGHT STATUS
+    def checkTest_rearmirror_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testrearmirror WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
     #HEADLAMP TEST STATUS
     def checkTest_supressor_model(self, id): 
         
@@ -1826,7 +2027,7 @@ class user_model():
       #HEADLAMP TEST STATUS
     def checkTest_exhaust_model(self, id): 
         
-        self.cur.execute(f"SELECT * FROM testexhaust WHERE id='{id}'")
+        self.cur.execute(f"SELECT * FROM testsilencer WHERE id='{id}'")
         result =  self.cur.fetchone()
 
         if result:
@@ -1863,6 +2064,235 @@ class user_model():
     def checkTest_dashboard_model(self, id): 
         
         self.cur.execute(f"SELECT * FROM testdashboard WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+    #HEADLAMP TEST STATUS
+    def checkTest_Rearmirror_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testrearmirror WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Brakingmanual_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testbrakingmanual WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Parkingbrakingmanual_model(self, id): 
+        self.cur.execute(f"SELECT * FROM testparkingbrakingmanual WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Steering_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM teststeering WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_jointplay_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testjointplay WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Speedometermanual_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testspeedometermanual WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_RUPD_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testrupd WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_LUPD_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testlupd WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Fastag_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testfastag WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Others_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testothers WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Wheel_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testwheel WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Vlt_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testvlt WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_hsrp_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testhsrp WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_battery_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testbattery WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Safetybelt_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testsafetybelt WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Speedgoverner_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testspeedgoverner WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_Spray_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testspray WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                #HEADLAMP TEST STATUS
+    def checkTest_tyres_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testtyres WHERE id='{id}'")
+        result =  self.cur.fetchone()
+
+        if result:
+            print(result)
+            return{"payload": result}
+        else: 
+            return make_response({"status":"No Data Found"},204)
+
+                             #HEADLAMP TEST STATUS
+    def checkTest_retro_model(self, id): 
+        
+        self.cur.execute(f"SELECT * FROM testretro WHERE id='{id}'")
         result =  self.cur.fetchone()
 
         if result:
