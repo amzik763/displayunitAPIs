@@ -76,7 +76,9 @@ class user_model():
                     res.headers['Content-Type'] = 'application/json'
                     return res
                 # message is not shown for 204    
-        except:
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            traceback.print_exc()
             res =  make_response({"logindata":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
