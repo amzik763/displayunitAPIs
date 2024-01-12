@@ -14,11 +14,11 @@ class user_model():
         try:
             self.con =  mysql.connector.connect(host="localhost",user="root",password="amzad",database="vft_app")
             self.con.autocommit = True
-            self.con._connection_timeout = 25
+            self.con.connect_timeout = 25
             self.cur = self.con.cursor(dictionary=True)
             self.con2 =  mysql.connector.connect(host="localhost",user="root",password="amzad",database="dunit")
             self.con2.autocommit = True
-            self.con2._connection_timeout = 25
+            self.con2.connect_timeout = 25
             self.cur2 = self.con2.cursor(dictionary=True)
             print("success")
         except mysql.connector.Error as err:
@@ -60,6 +60,8 @@ class user_model():
             
                 cur2.execute(query)
                 result = cur2.fetchone()
+                cur2.nextset()
+
 
                 if result is not None:
                     # return json.dumps(result)
@@ -113,6 +115,8 @@ class user_model():
                     
                     cur2.execute(query)
                     result = cur2.fetchone()
+                    cur2.nextset()
+
                     if result is not None:
                         res = make_response({"taskdata": result},200)
                         res.headers['Access-Control-Allow-Origin'] = "*"
@@ -154,6 +158,8 @@ class user_model():
 
                 cur2.execute(query)
                 result = cur2.fetchone()
+                cur2.nextset()
+
 
                 if result is not None:
                     # return json.dumps(result)
@@ -178,7 +184,6 @@ class user_model():
             res.headers['Content-Type'] = 'application/json'
             return res
 
-
 ###########################   GET FLOOR DETAILS API   ##########################
     def floor_model(self,data):
         try:
@@ -194,6 +199,7 @@ class user_model():
 
                 cur2.execute(query)
                 result = cur2.fetchone()
+                cur2.nextset()
 
                 if result is not None:
                     # return json.dumps(result)
@@ -231,6 +237,7 @@ class user_model():
                     self.con2.reconnect()
                 cur2.execute(query)
                 result = cur2.fetchall()
+                print(result)
 
                 if result is not None:
                     transformed_data = []
@@ -250,12 +257,14 @@ class user_model():
                             'process_name': row['process_name'],
                             'process_skill': row['process_skill']
                         }
+                        
                         # print(floor_id)
-                        # print(floor_num)
+                        print(transformed_row.get('station_num'))
                         if str(int(floor_num[1:])) == str(floor_id):
                             transformed_data.append(transformed_row)
-                        # Return the transformed data in JSON format
-                    # print(transformed_data)
+
+                    # Return the transformed data in JSON format
+                    print(transformed_data)
                     response = make_response(jsonify({'stationdata': transformed_data}), 200)
                     response.headers['Access-Control-Allow-Origin'] = "*"
                     response.headers['Content-Type'] = 'application/json'
@@ -270,6 +279,8 @@ class user_model():
                 # message is not shown for 204    
         except Exception as e:
             print(e)
+            print(f"An error occurred: {e}")
+            traceback.print_exc()
             res = make_response({"stationdata":"got error"},401)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
@@ -289,6 +300,7 @@ class user_model():
         
                 cur2.execute(query)
                 result = cur2.fetchone()
+                cur2.nextset()
            
                 if result is not None:
                     number_of_lines = int(result.get('number_of_lines', 0))
@@ -329,6 +341,7 @@ class user_model():
                 # message is not shown for 204    
         except Exception as e:
             print(e)
+            traceback.print_exc()
             self.con2.rollback()
             res = make_response({"floordata":"got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
@@ -412,12 +425,16 @@ class user_model():
         
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
+                cur2.nextset()
+
            
                 if result is not None:
                     process_id = int(result.get('process_id', 0))
                     query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
                     cur2.execute(query)
                     result = cur2.fetchone()
+                    cur2.nextset()
+
 
                     if result is not None:
                         res = make_response({"instructionImage": result},200)
@@ -529,6 +546,8 @@ class user_model():
         
                 self.cur2.execute(query)
                 result = self.cur2.fetchone()
+                cur2.nextset()
+
                 # print("start")
            
                 if result is not None:
@@ -536,6 +555,8 @@ class user_model():
                     query = f"SELECT * FROM processes WHERE process_id = '{process_id}'"
                     cur2.execute(query)
                     result = cur2.fetchone()
+                    cur2.nextset()
+
                     # print("not null 1")
 
                     if result is not None:
@@ -614,10 +635,11 @@ class user_model():
        
                 cur2.execute(query,values)
                 result = cur2.fetchone()
+
                 # print("start")
                 # print(result)
                 if cur2.rowcount > 0:
-                    
+                    cur2.nextset()
                     if isfilled == "0":
                         self.con2.commit()
                         if result is not None:
@@ -662,9 +684,11 @@ class user_model():
                     cur2.execute(query, values)
                 
                     result = cur2.fetchone()
+
                     # print("not null 1")
 
                     if cur2.rowcount > 0:
+                        cur2.nextset()
 
                         query = f"SELECT * FROM work_f1 WHERE MONTH(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{month}' AND DAY(STR_TO_DATE(timestamp, '%W, %M %d, %Y %H:%i:%s')) = '{date}'"
                         cur2.execute(query)
@@ -719,6 +743,7 @@ class user_model():
  
                     else:
                         # print("not good")
+                        cur2.nextset()
                         self.con2.rollback()
                         res = make_response({"workdata":"Cannot add 2"},201)
                         res.headers['Access-Control-Allow-Origin'] = "*"
@@ -728,6 +753,8 @@ class user_model():
                 else:
                     # return {"message":"No Data Found"}
                     # print("good")
+                    cur2.nextset()
+
                     self.con2.rollback()
                     res = make_response({"workdata":"Cannot add"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
@@ -736,6 +763,8 @@ class user_model():
                     # message is not shown for 204    
         except Exception as e:
             print(e)
+            cur2.nextset()
+
             traceback.print_exc()
             self.con2.rollback()
             res = make_response({"workdata":"got error"},202)
@@ -814,6 +843,8 @@ class user_model():
         
                 cur2.execute(query)
                 result = cur2.fetchone()
+                cur2.nextset()
+
 
                 if result is not None:
                     # return json.dumps(result)
@@ -899,12 +930,15 @@ class user_model():
                 cur2.executemany(qry, values)
                 result = cur2.fetchone()
 
+
                 if cur2.rowcount > 0:
+                    cur2.nextset()
                     res = make_response({"addStation": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
                     return res
                 else:
+                    cur2.nextset()
                     res = make_response({"addStation":"cannot add"},201)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
@@ -913,6 +947,7 @@ class user_model():
         except Exception as e:
             print(e)
             traceback.print_exc()
+            cur2.nextset()
             res = make_response({"addStation":"Got error"},202)
             res.headers['Access-Control-Allow-Origin'] = "*"
             res.headers['Content-Type'] = 'application/json'
