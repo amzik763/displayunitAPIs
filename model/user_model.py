@@ -244,6 +244,7 @@ class user_model():
                     for row in result:
                         floor_num, line_num, station_num = row['station_id'].split(' ')
                         transformed_row = {
+                            'station_id': row['station_id'],
                             'floor_num': int(floor_num[1:]),  # Extract numeric part and convert to int
                             'line_num': int(line_num[1:]),
                             'station_num': int(station_num[1:]),
@@ -257,7 +258,7 @@ class user_model():
                             'process_name': row['process_name'],
                             'process_skill': row['process_skill']
                         }
-                        
+
                         # print(floor_id)
                         print(transformed_row.get('station_num'))
                         if str(int(floor_num[1:])) == str(floor_id):
@@ -2340,4 +2341,199 @@ class user_model():
         else: 
             return make_response({"status":"No Data Found"},204)
 
+    def getAlltestData(self, id):
+        try:
+            self.con.start_transaction()
+
+            # Define a dictionary to store results
+            all_results = {}
+
+            # List of queries
+            queries = [
+                "testheadlamp", "testtoplight", "teststoplight", "testparkinglight",
+                "testfoglight", "testwarninglight", "testnumberplatelight",
+                "testoutlinemarkerlight", "testdirectionlight", "testhazardlight",
+                "testrearmirror", "testsupressor", "testsafetyglass", "testhorn",
+                "testsilencer", "testwiperblade", "testwipersystem", "testdashboard",
+                "testbrakingmanual", "testparkingbrakingmanual", "teststeering",
+                "testjointplay", "testspeedometermanual", "testrupd", "testlupd",
+                "testfastag", "testothers", "testwheel", "testvlt", "testhsrp",
+                "testbattery", "testsafetybelt", "testspeedgoverner", "testspray",
+                "testretro", "testtyres"
+            ]
+
+            # Execute queries and store results
+            for query in queries:
+                self.cur.execute(f"SELECT * FROM {query} WHERE id='{id}'")
+                all_results[query] = self.cur.fetchall()
+
+            # Commit the transaction
+            self.con.commit()
+
+            # Check the results and return the response
+            if any(self.cur.rowcount > 0 for query in queries):
+                return make_response({"testdata": all_results}, 200)
+            else:
+                self.con.rollback()
+                return make_response({"status": "Cannot get test"}, 401)
+
+        except Exception as e:
+            traceback.print_exc()
+            self.con.rollback()
+            return make_response({"status": "Rolled Back"}, 400)
                                                                                                                                                 
+    # def getAlltestData(self,id):
+    #     try:
+    #         self.con.start_transaction()
+    #         # self.cur.execute(f"INSERT INTO testdashboard(id,p1,p2,p3,p4,remark,status,img) VALUES('{id}','{p1}','{p2}','{p3}','{p4}','{remark}','{status}','{img}')")
+    #         # self.cur.execute(f"UPDATE tests SET testbrake = '{status}' WHERE id='{id}'")
+    #           # Execute the first query
+
+
+    #         self.cur.execute(f"SELECT * FROM testheadlamp WHERE id='{id}'")
+    #         resultheadlamp =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testtoplight WHERE id='{id}'")
+    #         resulttoplight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM teststoplight WHERE id='{id}'")
+    #         resultstoplight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testparkinglight WHERE id='{id}'")
+    #         resultparkinglight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testfoglight WHERE id='{id}'")
+    #         resultfoglight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testwarninglight WHERE id='{id}'")
+    #         resultwarninglight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testnumberplatelight WHERE id='{id}'")
+    #         resultnumberplate =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testoutlinemarkerlight WHERE id='{id}'")
+    #         resultoutlinemarker =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testdirectionlight WHERE id='{id}'")
+    #         resultdirectionlight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testhazardlight WHERE id='{id}'")
+    #         resulthazardlight =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testrearmirror WHERE id='{id}'")
+    #         resultrearmirror =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testsupressor WHERE id='{id}'")
+    #         resultsupressor =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testsafetyglass WHERE id='{id}'")
+    #         resultsafetyglass =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testhorn WHERE id='{id}'")
+    #         resulthorn =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testsilencer WHERE id='{id}'")
+    #         resultsilencer =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testwiperblade WHERE id='{id}'")
+    #         resultwiperblade =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testwipersystem WHERE id='{id}'")
+    #         resultwipersystem =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testdashboard WHERE id='{id}'")
+    #         resultdashboard =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testbrakingmanual WHERE id='{id}'")
+    #         resultbrakingmanual =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testparkingbrakingmanual WHERE id='{id}'")
+    #         resultparkingbrakingmanual =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM teststeering WHERE id='{id}'")
+    #         resultsteering =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testjointplay WHERE id='{id}'")
+    #         resultjointplay =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testspeedometermanual WHERE id='{id}'")
+    #         resultspeedometermanual =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testrupd WHERE id='{id}'")
+    #         resultrupd =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testlupd WHERE id='{id}'")
+    #         resultlupd =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testfastag WHERE id='{id}'")
+    #         resultfastag =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testothers WHERE id='{id}'")
+    #         resultothers =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testwheel WHERE id='{id}'")
+    #         resultwheel =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testvlt WHERE id='{id}'")
+    #         resultvlt =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testhsrp WHERE id='{id}'")
+    #         resulthsrp =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testbattery WHERE id='{id}'")
+    #         resultbattery =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testsafetybelt WHERE id='{id}'")
+    #         resultsafetybelt =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testspeedgoverner WHERE id='{id}'")
+    #         resultspeedgoverner =  self.cur.fetchone()
+
+    #         self.cur.execute(f"SELECT * FROM testspray WHERE id='{id}'")
+    #         resultspray =  self.cur.fetchall()
+
+    #         self.cur.execute(f"SELECT * FROM testretro WHERE id='{id}'")
+    #         result_retro = self.cur.fetchall()
+
+    #     # Execute the second query
+    #         self.cur.execute(f"SELECT * FROM testtyres WHERE id='{id}'")
+    #         result_tyres = self.cur.fetchall()
+    #         self.con.commit()
+
+    #         if self.cur.rowcount>0:
+    #             return make_response({"testretro": result_retro, "testtyres": result_tyres}, 200)
+
+    #         else:
+    #             self.con.rollback()
+    #             return make_response({"status":"Cannot get test"},401)
+    #     except Exception as e:
+    #         traceback.print_exc()
+    #         self.con.rollback()
+    #         return make_response({"status":"Rolled Back"},400)
+
+    def add_test_data_model(self, id, table_name, params, status_col, status, img_col, img):
+        try:
+            self.con.start_transaction()
+
+            # Construct the INSERT query
+            query = f"INSERT INTO {table_name}({','.join(params.keys())}, {img_col}, remark, {status_col}) VALUES({','.join(['%s']*len(params))}, %s, %s, %s)"
+            values = [params[key] for key in params] + [img, 'remark_placeholder', status]
+
+            # Execute the INSERT query
+            self.cur.execute(query, values)
+
+            # Update the status in the 'tests' table
+            self.cur.execute(f"UPDATE tests SET {status_col} = %s WHERE id = %s", (status, id))
+
+            # Commit the transaction
+            self.con.commit()
+
+            if self.cur.rowcount > 0:
+                return make_response({"status": "Test Added"}, 200)
+            else:
+                return make_response({"status": "Cannot add test"}, 401)
+
+        except Exception as e:
+            traceback.print_exc()
+            self.con.rollback()
+            return make_response({"status": "Rolled Back"}, 400)
