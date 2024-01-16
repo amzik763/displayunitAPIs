@@ -7,7 +7,7 @@ import mysql.connector
 import base64
 import json
 import os
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 import pytz
 class user_model():
     def __init__(self):
@@ -2365,7 +2365,7 @@ class user_model():
             # Execute queries and store results
             for query in queries:
                 self.cur.execute(f"SELECT * FROM {query} WHERE id='{id}'")
-                all_results[query] = self.cur.fetchall()
+                all_results[query] = self.cur.fetchone()
 
             # Commit the transaction
             self.con.commit()
@@ -2511,19 +2511,36 @@ class user_model():
     #         self.con.rollback()
     #         return make_response({"status":"Rolled Back"},400)
 
-    def add_test_data_model(self, id, table_name, params, status_col, status, img_col, img):
+    def add_test_data_model(self, request_data):
         try:
-            self.con.start_transaction()
+            # request_data = request.get_json()
+            # print(request_data)
+            # id = request_data.get('id')
+            # table_name = request_data.get('table_name')
+            # params = request_data.get('params')
+            # status = request_data.get('status')
+            # img = request_data.get('img')
+            # remark = request_data.get('remark')
+            # self.con.start_transaction()
 
-            # Construct the INSERT query
-            query = f"INSERT INTO {table_name}({','.join(params.keys())}, {img_col}, remark, {status_col}) VALUES({','.join(['%s']*len(params))}, %s, %s, %s)"
-            values = [params[key] for key in params] + [img, 'remark_placeholder', status]
+            # print(params)
+
+            nested_data = request_data.get('nameValuePairs', {})
+            id = nested_data.get('id')
+            table_name = nested_data.get('table_name')
+            params = nested_data.get('params')
+            status = nested_data.get('status')
+            img = nested_data.get('img')
+            remark = nested_data.get('remark')
+
+            query = f"INSERT INTO {table_name}({','.join(params.keys())}, img, remark, status) VALUES({','.join(['%s']*len(params))}, %s, %s, %s)"
+            values = [params[key] for key in params] + [img, remark, status]
 
             # Execute the INSERT query
             self.cur.execute(query, values)
 
             # Update the status in the 'tests' table
-            self.cur.execute(f"UPDATE tests SET {status_col} = %s WHERE id = %s", (status, id))
+            self.cur.execute(f"UPDATE tests SET {table_name} = %s WHERE id = %s", (status, id))
 
             # Commit the transaction
             self.con.commit()

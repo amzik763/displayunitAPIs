@@ -752,7 +752,6 @@ def CheckTest_Spray(id):
 def CheckTest_Tyres(id):
     return obj.checkTest_tyres_model(id) 
 
-
 #CHECK DASHBOARD TEST
 @app.route("/test/check/retro/<id>", methods=["GET"])
 def CheckTest_retro(id):
@@ -762,3 +761,9 @@ def CheckTest_retro(id):
 @app.route("/test/getAllData/<id>", methods=["POST"])
 def getAllTest(id):
     return obj.getAlltestData(id) 
+
+
+#ADDTESTDATA
+@app.route("/test/add", methods=["POST"])
+def addTest_one():
+    return  obj.add_test_data_model(request.json)
