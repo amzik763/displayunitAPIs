@@ -760,10 +760,17 @@ def CheckTest_retro(id):
 #CHECK DASHBOARD TEST
 @app.route("/test/getAllData/<id>", methods=["POST"])
 def getAllTest(id):
-    return obj.getAlltestData(id) 
+    return obj.getAlltestData(id)
 
 
 #ADDTESTDATA
 @app.route("/test/add", methods=["POST"])
-def addTest_one():
+def addTest_any():
     return  obj.add_test_data_model(request.json)
+
+
+
+#UPDATETESTDATA
+@app.route("/test/updateany", methods=["POST"])
+def updateTest_any():
+    return  obj.update_test_data_model(request.json)

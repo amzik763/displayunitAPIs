@@ -2513,18 +2513,6 @@ class user_model():
 
     def add_test_data_model(self, request_data):
         try:
-            # request_data = request.get_json()
-            # print(request_data)
-            # id = request_data.get('id')
-            # table_name = request_data.get('table_name')
-            # params = request_data.get('params')
-            # status = request_data.get('status')
-            # img = request_data.get('img')
-            # remark = request_data.get('remark')
-            # self.con.start_transaction()
-
-            # print(params)
-
             nested_data = request_data.get('nameValuePairs', {})
             id = nested_data.get('id')
             table_name = nested_data.get('table_name')
@@ -2535,6 +2523,8 @@ class user_model():
 
             query = f"INSERT INTO {table_name}({','.join(params.keys())}, img, remark, status) VALUES({','.join(['%s']*len(params))}, %s, %s, %s)"
             values = [params[key] for key in params] + [img, remark, status]
+
+            self.con.start_transaction()
 
             # Execute the INSERT query
             self.cur.execute(query, values)
@@ -2554,3 +2544,108 @@ class user_model():
             traceback.print_exc()
             self.con.rollback()
             return make_response({"status": "Rolled Back"}, 400)
+ 
+    # def update_test_data_model(self, request_data):
+
+    #     print("running update query")
+    #     try:
+    #         nested_data = request_data.get('nameValuePairs', {})
+    #         id = nested_data.get('id')
+    #         table_name = nested_data.get('table_name')
+    #         params = nested_data.get('params')
+    #         status = nested_data.get('status')
+    #         img = nested_data.get('img')
+    #         remark = nested_data.get('remark')
+
+    #         # Update the record
+    #         set_clause = ', '.join([f"{param} = %s" for param in params.keys()])
+    #         update_query = f"UPDATE {table_name} SET id = %s, {set_clause}, img = %s, remark = %s, status = %s WHERE id = %s"
+    #         update_values = [id] + [params[key] for key in params] + [img, remark, status, id]
+
+    #         self.con.start_transaction()
+
+    #         self.cur.execute(update_query, update_values)
+    #         print("running update query 2")
+
+    #         self.cur.execute(f"UPDATE tests SET {table_name} = %s WHERE id = %s", (status, id))
+    #         print("running update query 3")
+
+    #         # Commit the transaction
+    #         self.con.commit()
+
+    #         if self.cur.rowcount > 0:
+    #             return make_response({"status": "Test Updated"}, 200)
+    #         else:
+    #             return make_response({"status": "Same values"}, 201)
+
+    #     except Exception as e:
+    #         traceback.print_exc()
+    #         self.con.rollback()
+    #         return make_response({"status": "Rolled Back"}, 400)      
+
+    def update_test_data_model(self, request_data):
+        print("running update query")
+        print(request_data)
+        try:
+            nested_data = request_data.get('nameValuePairs', {})
+            id = nested_data.get('id')
+            table_name = nested_data.get('table_name')
+            params = nested_data.get('params')
+            status = nested_data.get('status')
+            img = nested_data.get('img')
+            remark = nested_data.get('remark')
+
+            allowed_fields = get_allowed_fields_for_table(table_name)
+            # Filter only allowed fields from the params
+
+            print(allowed_fields)
+            filtered_params = {key: params.get(key) for key in allowed_fields}
+
+            print(filtered_params)
+            print(status)
+
+            for key, value in filtered_params.items():
+                print(f"{key}: {value}, Type: {type(value)}")
+
+            if any(value == "2" for value in filtered_params.values()):
+                status = "fail"
+            print(status)
+            # Update the record
+            set_clause = ', '.join([f"{param} = %s" for param in filtered_params.keys()])
+            update_query = f"UPDATE {table_name} SET {set_clause}, img = %s, remark = %s, status = %s WHERE id = %s"
+            update_values = [filtered_params[key] for key in filtered_params] + [img, remark, status, id]
+
+            print(update_values)
+            self.con.start_transaction()
+
+            self.cur.execute(update_query, update_values)
+            print("running update query 2")
+
+            self.cur.execute(f"UPDATE tests SET {table_name} = %s WHERE id = %s", (status, id))
+            print("running update query 3")
+
+            # Commit the transaction
+            self.con.commit()
+
+            if self.cur.rowcount > 0:
+                return make_response({"status": "Test Updated"}, 200)
+            else:
+                return make_response({"status": "Test Already Updated"}, 201)
+
+        except Exception as e:
+            traceback.print_exc()
+            self.con.rollback()
+            return make_response({"status": "Rolled Back"}, 400)
+
+
+def get_allowed_fields_for_table(table_name):
+    # Define a mapping of tables to allowed fields
+    table_fields_mapping = {
+        "testheadlamp": ["p1", "p2", "p3", "p4", "p5"],
+        "testtoplight": ["p1", "p2", "p3", "p4", "p5", "p6"],
+        "teststoplight": ["p1", "p2", "p3", "p4"],
+        # Add more tables and their allowed fields as needed
+    }
+
+    # Return the allowed fields for the specified table
+    return table_fields_mapping.get(table_name, [])
