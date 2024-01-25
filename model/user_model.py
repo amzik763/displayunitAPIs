@@ -2612,8 +2612,11 @@ class user_model():
             print(status)
             # Update the record
             set_clause = ', '.join([f"{param} = %s" for param in filtered_params.keys()])
-            update_query = f"UPDATE {table_name} SET {set_clause}, img = %s, remark = %s, status = %s WHERE id = %s"
-            update_values = [filtered_params[key] for key in filtered_params] + [img, remark, status, id]
+            # update_query = f"UPDATE {table_name} SET {set_clause}, img = %s, remark = %s, status = %s WHERE id = %s"
+            # update_values = [filtered_params[key] for key in filtered_params] + [img, remark, status, id]
+
+            update_query = f"UPDATE {table_name} SET {set_clause}, img = %s, status = %s WHERE id = %s"
+            update_values = [filtered_params[key] for key in filtered_params] + [img, status, id]
 
             print(update_values)
             self.con.start_transaction()
@@ -2643,7 +2646,7 @@ def get_allowed_fields_for_table(table_name):
     table_fields_mapping = {
         "testheadlamp": ["p1", "p2", "p3", "p4", "p5"],
         "testtoplight": ["p1", "p2", "p3", "p4", "p5", "p6"],
-        "teststoplight": ["p1", "p2", "p3", "p4"],
+        "teststoplight": ["p1", "p2", "p3", "p4","p5"],
         # Add more tables and their allowed fields as needed
     }
 
