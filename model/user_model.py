@@ -924,7 +924,7 @@ class user_model():
                 stationdata.get('process_skill')
                 ) 
                 for stationdata in data]
-            
+
             with self.con2.cursor(dictionary=True) as cur2:
                 if not self.con2.is_connected():
                     self.con2.reconnect()
@@ -961,6 +961,7 @@ class user_model():
         result =  self.cur.fetchall()
 
         if len(result)>0:
+            # return json.dumps(result)
             # return json.dumps(result)
             # return{"payload": result}
             res = make_response({"payload": result},200)
