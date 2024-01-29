@@ -961,21 +961,17 @@ class user_model():
         result =  self.cur.fetchall()
 
         if len(result)>0:
-            
-            # return json.dumps(result)
-            # return{"paylo ad": result}
+
             res = make_response({"payload": result},200)
             res.headers['Access-Control-Allow-Origin'] = "*"
             return res
         else:
             # return {"message":"No Data Found"}
             return make_response({"message":"No Data Found"},204)
-             # message is not shown for 204
         
 
     def addOneUser_model(self, data):
         self.cur.execute(f"INSERT INTO users(name, roll, password) VALUES('{data['name']}','{data['roll']}','{data['password']}')")
-        # print(data['name'])
         return make_response({"message":"User Created Successfully"},201)
     
 
