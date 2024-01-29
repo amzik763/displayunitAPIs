@@ -961,9 +961,9 @@ class user_model():
         result =  self.cur.fetchall()
 
         if len(result)>0:
+            
             # return json.dumps(result)
-            # return json.dumps(result)
-            # return{"payload": result}
+            # return{"paylo ad": result}
             res = make_response({"payload": result},200)
             res.headers['Access-Control-Allow-Origin'] = "*"
             return res
