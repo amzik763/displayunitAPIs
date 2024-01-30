@@ -35,15 +35,12 @@ class user_model():
             result = cur2.fetchall()
 
             if len(result)>0:
-            # return json.dumps(result)
-            # return{"payload": result}
                 res = make_response({"payload": result},200)
                 res.headers['Access-Control-Allow-Origin'] = "*"
                 return res
             else:
             # return {"message":"No Data Found"}
                 return make_response({"message":"No Data Found"},204)
-             # message is not shown for 204    
 
 ###########################   LOGIN API   ##########3################
     def operator_login_model(self,data):
@@ -51,7 +48,6 @@ class user_model():
             employee_code = data.get('employee_code')
             password = data.get('password')
 
-            # Construct and execute the query
             query = f"SELECT * FROM login_operator WHERE employee_code = '{employee_code}' AND password = '{password}'"
             
             with self.con2.cursor(dictionary=True) as cur2:
@@ -64,8 +60,6 @@ class user_model():
 
 
                 if result is not None:
-                    # return json.dumps(result)
-                # return{"payload": result}
                     res = make_response({"logindata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
                     res.headers['Content-Type'] = 'application/json'
