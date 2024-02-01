@@ -58,7 +58,6 @@ class user_model():
                 result = cur2.fetchone()
                 cur2.nextset()
 
-
                 if result is not None:
                     res = make_response({"logindata": result},200)
                     res.headers['Access-Control-Allow-Origin'] = "*"
